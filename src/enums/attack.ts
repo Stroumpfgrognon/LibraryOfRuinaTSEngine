@@ -4,6 +4,12 @@ export enum DMGType {
   Blunt,
 }
 
+export enum AttackType {
+  HP,
+  Stagger,
+  Mixed,
+}
+
 export enum TriggerText {
   EndOfScene = "End of Scene",
   CombatStart = "Combat Start",

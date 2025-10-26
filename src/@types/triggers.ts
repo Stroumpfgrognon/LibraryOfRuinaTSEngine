@@ -1,39 +1,43 @@
 import { ResultMessage } from "./resultlist";
 
 export namespace CombatTriggers {
-  export interface endOfSceneTrigger {
+  export interface endOfScene {
     endOfScene(): ResultMessage | void;
   }
 
-  export interface combatStartTrigger {
+  export interface CombatStart {
     combatStart(): ResultMessage | void;
   }
 
-  export interface onUseTrigger {
+  export interface OnPlay {
+    onPlay(): ResultMessage | void;
+  }
+
+  export interface OnUse {
     onUse(): ResultMessage | void;
   }
 
-  export interface diceRollTrigger {
+  export interface DiceRoll {
     onDiceRoll(): ResultMessage | void;
   }
 
-  export interface onClashWinTrigger {
+  export interface OnClashWin {
     onClashWin(): ResultMessage | void;
   }
 
-  export interface onClashLoseTrigger {
+  export interface OnClashLose {
     onClashLose(): ResultMessage | void;
   }
 
-  export interface onHitTrigger {
+  export interface OnHit {
     onHit(): ResultMessage | void;
   }
 
-  export interface onHitReceivedTrigger {
+  export interface OnHitReceived {
     onHitReceived(): ResultMessage | void;
   }
 
-  export interface deathTrigger {
+  export interface Death {
     onDeath(): ResultMessage | void;
   }
 }

@@ -6,7 +6,7 @@ import { EffectType } from "../enums/effect";
 
 export class Burn
   extends StatusEffect
-  implements ExpiringStatus, CombatTriggers.endOfSceneTrigger
+  implements ExpiringStatus, CombatTriggers.endOfScene
 {
   constructor(count: number) {
     super(
