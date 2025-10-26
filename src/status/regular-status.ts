@@ -1,11 +1,12 @@
-import { StatusEffectsTriggers} from "../@types/triggers";
+import { CombatTriggers } from "../@types/triggers";
 import { StatusEffect, ExpiringStatus } from "../@types/status";
-import { StatusResult, StatusResultMessage } from "../@types/results.js";
-import { StatusEffectType } from "../enums/status";
+import { StatusResult } from "../@types/results.js";
+import { StatusResultMessage } from "../@types/resultlist";
+import { EffectType } from "../enums/effect";
 
 export class Burn
   extends StatusEffect
-  implements ExpiringStatus, StatusEffectsTriggers.endOfSceneTrigger
+  implements ExpiringStatus, CombatTriggers.endOfSceneTrigger
 {
   constructor(count: number) {
     super(
@@ -20,14 +21,14 @@ export class Burn
   expire() {
     this.count = Math.floor((this.count * 2) / 3);
     if (this.count <= 0) {
-      return new StatusResult(StatusEffectType.ExpungeStatus, 1);
+      return new StatusResult(EffectType.ExpungeStatus, 1);
     }
     return null;
   }
 
-  endOfScene(): StatusResultMessage | void {
+  endOfScene() {
     let result = StatusResultMessage.createMessage(
-      StatusEffectType.Damage,
+      EffectType.Damage,
       this.count
     );
     result.addResult(this.expire());

@@ -1,39 +1,39 @@
-import { StatusResultMessage } from "./results";
+import { ResultMessage } from "./resultlist";
 
-export namespace StatusEffectsTriggers {
+export namespace CombatTriggers {
   export interface endOfSceneTrigger {
-    endOfScene(): StatusResultMessage | void;
+    endOfScene(): ResultMessage | void;
   }
 
   export interface combatStartTrigger {
-    combatStart(): StatusResultMessage | void;
+    combatStart(): ResultMessage | void;
   }
 
   export interface onUseTrigger {
-    onUse(): StatusResultMessage | void;
+    onUse(): ResultMessage | void;
   }
 
   export interface diceRollTrigger {
-    onDiceRoll(): StatusResultMessage | void;
+    onDiceRoll(): ResultMessage | void;
   }
 
   export interface onClashWinTrigger {
-    onClashWin(): StatusResultMessage | void;
+    onClashWin(): ResultMessage | void;
   }
 
   export interface onClashLoseTrigger {
-    onClashLose(): StatusResultMessage | void;
+    onClashLose(): ResultMessage | void;
   }
 
   export interface onHitTrigger {
-    onHit(): StatusResultMessage | void;
+    onHit(): ResultMessage | void;
   }
 
   export interface onHitReceivedTrigger {
-    onHitReceived(): StatusResultMessage | void;
+    onHitReceived(): ResultMessage | void;
   }
 
   export interface deathTrigger {
-    onDeath(): StatusResultMessage | void;
+    onDeath(): ResultMessage | void;
   }
 }

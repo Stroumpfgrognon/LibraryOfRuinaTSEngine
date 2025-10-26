@@ -1,30 +1,37 @@
-import { StatusEffectType } from "../enums/status";
+import { EffectType } from "../enums/effect";
+import { StatusEffect } from "./status";
+export class Result {}
 
-export class StatusResult {
-  type: StatusEffectType;
+export class StatusResult extends Result {
+  type: EffectType;
   value: number;
 
-  constructor(type: StatusEffectType, value: number) {
+  constructor(type: EffectType, value: number) {
+    super();
     this.type = type;
     this.value = value;
   }
 }
 
-export class StatusResultMessage {
-  results: StatusResult[];
+export class RollResult extends Result {
+  type: EffectType;
+  value: number;
 
-  constructor(results: StatusResult[]) {
-    this.results = results;
+  constructor(type: EffectType, value: number) {
+    super();
+    this.type = type;
+    this.value = value;
   }
+}
 
-  static createMessage(
-    type: StatusEffectType,
-    value: number
-  ): StatusResultMessage {
-    return new StatusResultMessage([new StatusResult(type, value)]);
-  }
-
-  addResult(result: StatusResult | null) {
-    if (result) this.results.push(result);
+export class RollResultWithStatus extends RollResult {
+  statusType: StatusEffect;
+  constructor(
+    type: EffectType,
+    value: number,
+    statusType: StatusEffect
+  ) {
+    super(type, value);
+    this.statusType = statusType;
   }
 }
