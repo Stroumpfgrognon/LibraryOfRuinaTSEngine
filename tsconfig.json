@@ -1,8 +1,12 @@
 {
   "include": ["src/**/*.ts"],
   "compilerOptions": {
-    "noEmit": true,
+    // "noEmit": true,
     "target": "es2020",
+    "rootDir": ".",
+    "outDir": "./build",
+    "module": "commonjs",
+    "sourceMap": true,
     "allowJs": true,
     "checkJs": true,
     // Strict Checks
@@ -35,6 +39,6 @@
     "noImplicitUseStrict": false,
     "suppressExcessPropertyErrors": false,
     "noStrictGenericChecks": false,
-    "strict": true,
+    "strict": true
   }
 }
