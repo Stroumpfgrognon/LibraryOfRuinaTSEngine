@@ -1,4 +1,4 @@
-import { EmotionType } from "../enums/emotion";
+import { EmotionType } from "#enums/emotion";
 
 export class EmotionLevelUp {
   levelChanged: boolean;

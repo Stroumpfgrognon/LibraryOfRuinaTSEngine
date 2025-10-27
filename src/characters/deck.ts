@@ -1,4 +1,4 @@
-import {Page} from "../pages/pages";
+import {Page} from "#pages/pages";
 
 export class Deck {
   pages: Page[];

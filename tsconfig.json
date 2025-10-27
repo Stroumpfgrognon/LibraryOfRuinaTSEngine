@@ -1,11 +1,21 @@
 {
-  "include": ["src/**/*.ts"],
+  "include": ["**/*.ts", "testing/*/*.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "vitest.workspace.ts",
+    "public/service-worker.js"
+  ],
   "compilerOptions": {
     // "noEmit": true,
-    "target": "es2020",
+    "target": "es6",
     "rootDir": ".",
     "outDir": "./build",
-    "module": "commonjs",
+    // "outFile" : "./build/compiled.js",
+    "module": "es6",
+    "moduleResolution": "bundler",
     "sourceMap": true,
     "allowJs": true,
     "checkJs": true,
@@ -39,6 +49,19 @@
     "noImplicitUseStrict": false,
     "suppressExcessPropertyErrors": false,
     "noStrictGenericChecks": false,
-    "strict": true
+    "strict": true,
+    "paths": {
+      "#types/*": ["./src/@types/*"],
+      "#enums/*": ["./src/enums/*"],
+      "#pages/*": ["./src/pages/*"],
+      "#sprites/*": ["./src/sprites/*"],
+      "#characters/*": ["./src/characters/*"],
+      "#effects/*": ["./src/effects/*"],
+      "#reception/*": ["./src/reception/*"],
+      "#utils/*": ["./src/utils/*"],
+      "#testing/*": ["./testing/script/*"],
+      "#status/*": ["./src/status/*"]
+    },
+    "lib": ["es2020", "es6"]
   }
 }

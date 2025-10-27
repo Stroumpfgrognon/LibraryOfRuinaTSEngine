@@ -1,5 +1,5 @@
-import { CombatTriggers } from "../@types/triggers";
-import { RollResultMessage } from "../@types/resultlist";
+import { CombatTriggers } from "#types/triggers";
+import { RollResultMessage } from "#types/resultlist";
 
 export namespace DiceEffect {
   export class Effect {
@@ -7,6 +7,12 @@ export namespace DiceEffect {
 
     constructor(description: string) {
       this.description = description;
+    }
+  }
+
+  export class NullEffect extends Effect {
+    constructor() {
+      super("");
     }
   }
 
@@ -65,6 +71,12 @@ export namespace PageEffect {
 
     constructor(description: string) {
       this.description = description;
+    }
+  }
+
+  export class NullEffect extends Effect {
+    constructor() {
+      super("");
     }
   }
 

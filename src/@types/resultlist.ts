@@ -1,5 +1,5 @@
-import { StatusResult, RollResult } from "./results";
-import { EffectType } from "../enums/effect";
+import { StatusResult, RollResult } from "#types/results";
+import { EffectType } from "#enums/effect";
 
 export class ResultMessage {}
 

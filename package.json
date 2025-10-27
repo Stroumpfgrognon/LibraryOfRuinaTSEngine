@@ -1,0 +1,29 @@
+{
+  "name": "libraryofruinatsengine",
+  "version": "1.0.0",
+  "description": "A Library of Ruina combat engine written in Typescript",
+  "homepage": "https://github.com/Stroumpfgrognon/LibraryOfRuinaTSEngine#readme",
+  "bugs": {
+    "url": "https://github.com/Stroumpfgrognon/LibraryOfRuinaTSEngine/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Stroumpfgrognon/LibraryOfRuinaTSEngine.git"
+  },
+  "license": "ISC",
+  "author": "Stroumpf",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "build:bundle": "webpack --config webpack.config.js"
+  },
+  "devDependencies": {
+    "ts-loader": "^9.5.4",
+    "tsconfig-paths-webpack-plugin": "^4.2.0",
+    "typescript": "^5.9.3",
+    "webpack": "^5.102.1",
+    "webpack-cli": "^6.0.1"
+  }
+}

@@ -1,4 +1,4 @@
-import { Character } from "../characters/characters";
+import { Character } from "#characters/characters";
 
 export class Reception {
     allies : Character[];

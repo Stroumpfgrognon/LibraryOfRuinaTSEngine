@@ -3,7 +3,7 @@
  * Checks wether or not a type comforms to a given interface
  */
 
-const isTSInterface = <T>(value: any, keys: (keyof T)[], requiredKeys: (keyof T)[]): value is T => {
+export const isTSInterface = <T>(value: any, keys: (keyof T)[], requiredKeys: (keyof T)[]): value is T => {
     if (typeof value !== 'object' || value === null)
         return false;
  

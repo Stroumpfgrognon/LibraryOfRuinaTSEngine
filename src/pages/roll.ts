@@ -1,5 +1,5 @@
-import { DiceEffect } from "./effects";
-import { DMGType } from "../enums/attack";
+import { DiceEffect } from "#pages/effects";
+import { DMGType } from "#enums/attack";
 
 export class DiceRoll {
   rollMin: number;

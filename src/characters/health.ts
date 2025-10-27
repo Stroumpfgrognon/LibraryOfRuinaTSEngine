@@ -1,4 +1,4 @@
-import { DMGType, AttackType } from "../enums/attack";
+import { DMGType, AttackType } from "#enums/attack";
 export class Resistance {
   SlashHP: number;
   PierceHP: number;

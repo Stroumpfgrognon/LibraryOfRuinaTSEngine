@@ -1,12 +1,12 @@
-import { StatusEffect } from "../@types/status";
-import { AttackType, DMGType } from "../enums/attack";
-import { Page } from "../pages/pages";
-import { characterSpriteSheet } from "../sprites/spritesheet";
-import { Deck } from "./deck";
-import { Dice } from "./dice";
-import { EmotionEngine } from "./emotion";
-import { Health } from "./health";
-import { TurnStats } from "./stats";
+import { StatusEffect } from "#types/status";
+import { AttackType, DMGType } from "#enums/attack";
+import { Page } from "#pages/pages";
+import { characterSpriteSheet } from "#sprites/spritesheet";
+import { Deck } from "#characters/deck";
+import { Dice } from "#characters/dice";
+import { EmotionEngine } from "#characters/emotion";
+import { Health } from "#characters/health";
+import { TurnStats } from "#characters/stats";
 
 export class Character {
   name: string;
