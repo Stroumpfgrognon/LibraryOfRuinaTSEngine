@@ -34,7 +34,11 @@ export class Character {
     this.health = health;
     this.status = [];
     this.deck = deck;
-    this.hand = [];
+    let handvar = [];
+    for (let i = 0; i < 5; i++) {
+      handvar.push(deck.drawPage());
+    }
+    this.hand = handvar;
     this.emotion = emotion;
     this.dices = [];
     for (let i = 0; i < diceamount; i++) {

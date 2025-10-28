@@ -44,8 +44,8 @@ export class Resistance {
 }
 
 export class Health {
-  maxHealth: number;
-  currentHealth: number;
+  maxHP: number;
+  currentHP: number;
   maxStagger: number;
   currentStagger: number;
   resistance: Resistance;
@@ -57,8 +57,8 @@ export class Health {
     currentStagger: number,
     resistance: Resistance
   ) {
-    this.maxHealth = maxHealth;
-    this.currentHealth = currentHealth;
+    this.maxHP = maxHealth;
+    this.currentHP = currentHealth;
     this.maxStagger = maxStagger;
     this.currentStagger = currentStagger;
     this.resistance = resistance;
@@ -71,8 +71,8 @@ export class Health {
         amount,
         false
       );
-      this.currentHealth -= damageToHealth;
-      if (this.currentHealth < 0) this.currentHealth = 0;
+      this.currentHP -= damageToHealth;
+      if (this.currentHP < 0) this.currentHP = 0;
     }
     if (type === AttackType.Stagger || type === AttackType.Mixed) {
       const damageToStagger = this.resistance.calculateDamage(

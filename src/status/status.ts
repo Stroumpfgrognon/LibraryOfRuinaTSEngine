@@ -2,6 +2,7 @@ import { StatusResult } from "#results/results";
 
 export class StatusEffect {
   name: string;
+  icon: string;
   description: string;
   countable: boolean;
   count: number;
@@ -9,12 +10,14 @@ export class StatusEffect {
 
   constructor(
     name: string,
+    icon: string,
     description: string,
     countable: boolean = false,
     count: number = 0,
     hidden: boolean = false
   ) {
     this.name = name;
+    this.icon = icon;
     this.description = description;
     this.countable = countable;
     this.count = count;

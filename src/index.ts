@@ -2,10 +2,10 @@
 // in `tsconfig.json`. This keeps imports concise and consistent across the codebase.
 
 // @types
-export * from '#types/resultlist';
-export * from '#types/results';
-export * from '#types/status';
-export * from '#types/triggers';
+export * from '#results/resultlist';
+export * from '#results/results';
+export * from '#status/status';
+export * from '#triggers/triggers';
 
 // Characters
 export * from '#characters/characters';

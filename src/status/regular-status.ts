@@ -11,6 +11,7 @@ export class Burn
   constructor(count: number) {
     super(
       "Burn",
+      "https://libraryofruina.wiki.gg/images/thumb/BurnIcon.png/26px-BurnIcon.png?58529c",
       "At the end of the Scene, take X damage and subtract 1/3rd of the Burn stack. (Rounds down).",
       true,
       count,

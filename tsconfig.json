@@ -58,7 +58,6 @@
       "#effects/*": ["./src/effects/*"],
       "#reception/*": ["./src/reception/*"],
       "#utils/*": ["./src/utils/*"],
-      "#testing/*": ["./testing/script/*"],
       "#status/*": ["./src/status/*"],
       "#results/*": ["./src/results/*"],
       "#triggers/*": ["./src/triggers/*"]
