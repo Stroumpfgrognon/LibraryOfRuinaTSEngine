@@ -1,4 +1,4 @@
-import { ResultMessage } from "#types/resultlist";
+import { ResultMessage } from "#results/resultlist";
 
 export namespace CombatTriggers {
   export interface endOfScene {

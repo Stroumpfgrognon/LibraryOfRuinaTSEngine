@@ -51,7 +51,6 @@
     "noStrictGenericChecks": false,
     "strict": true,
     "paths": {
-      "#types/*": ["./src/@types/*"],
       "#enums/*": ["./src/enums/*"],
       "#pages/*": ["./src/pages/*"],
       "#sprites/*": ["./src/sprites/*"],
@@ -60,7 +59,9 @@
       "#reception/*": ["./src/reception/*"],
       "#utils/*": ["./src/utils/*"],
       "#testing/*": ["./testing/script/*"],
-      "#status/*": ["./src/status/*"]
+      "#status/*": ["./src/status/*"],
+      "#results/*": ["./src/results/*"],
+      "#triggers/*": ["./src/triggers/*"]
     },
     "lib": ["es2020", "es6"]
   }

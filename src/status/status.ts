@@ -1,4 +1,4 @@
-import { StatusResult } from "#types/results";
+import { StatusResult } from "#results/results";
 
 export class StatusEffect {
   name: string;

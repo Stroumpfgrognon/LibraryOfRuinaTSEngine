@@ -1,5 +1,5 @@
-import { CombatTriggers } from "#types/triggers";
-import { RollResultMessage } from "#types/resultlist";
+import { CombatTriggers } from "#triggers/triggers";
+import { RollResultMessage } from "#results/resultlist";
 
 export namespace DiceEffect {
   export class Effect {

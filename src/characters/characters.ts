@@ -1,4 +1,4 @@
-import { StatusEffect } from "#types/status";
+import { StatusEffect } from "#status/status";
 import { AttackType, DMGType } from "#enums/attack";
 import { Page } from "#pages/pages";
 import { characterSpriteSheet } from "#sprites/spritesheet";

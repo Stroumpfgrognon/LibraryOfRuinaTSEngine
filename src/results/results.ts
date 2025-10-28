@@ -1,5 +1,5 @@
 import { EffectType } from "#enums/effect";
-import { StatusEffect } from "#types/status";
+import { StatusEffect } from "#status/status";
 export class Result {}
 
 export class StatusResult extends Result {

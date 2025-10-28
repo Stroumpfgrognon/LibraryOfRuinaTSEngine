@@ -1,7 +1,7 @@
-import { CombatTriggers } from "#types/triggers";
-import { StatusEffect, ExpiringStatus } from "#types/status";
-import { StatusResult } from "#types/results";
-import { StatusResultMessage } from "#types/resultlist";
+import { CombatTriggers } from "#triggers/triggers";
+import { StatusEffect, ExpiringStatus } from "#status/status";
+import { StatusResult } from "#results/results";
+import { StatusResultMessage } from "#results/resultlist";
 import { EffectType } from "#enums/effect";
 
 export class Burn

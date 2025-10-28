@@ -6,7 +6,7 @@ module.exports = {
   entry: "./src/index.ts",
   output: {
     path: path.resolve(__dirname, "dist"),
-    filename: "libraryofruina.js",
+    filename: "LoREngine.js",
     library: "LoREngine",
   },
   resolve: {
