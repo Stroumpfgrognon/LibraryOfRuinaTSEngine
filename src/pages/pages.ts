@@ -19,3 +19,13 @@ export class Page {
     this.rolls = rolls;
   }
 }
+
+export class HandPage {
+  page: Page;
+  index: number;
+
+  constructor(page: Page, index: number) {
+    this.page = page;
+    this.index = index;
+  }
+}

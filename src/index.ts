@@ -14,6 +14,7 @@ export * from '#characters/dice';
 export * from '#characters/emotion';
 export * from '#characters/health';
 export * from '#characters/stats';
+export * from '#characters/attacks';
 
 // Enums
 export * from '#enums/attack';

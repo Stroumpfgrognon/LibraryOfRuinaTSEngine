@@ -29,7 +29,6 @@ export class Deck {
     while (this.seenPages.includes(roll)) {
       roll = getRandomInt(this.pages.length);
     }
-    console.log(roll);
     this.seenPages.push(roll);
     return this.pages[roll];
   }
