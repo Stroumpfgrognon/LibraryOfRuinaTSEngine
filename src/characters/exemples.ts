@@ -11,7 +11,7 @@ import { DiceEffect, PageEffect } from "#pages/effects";
 export class Finn extends Character {
   constructor() {
     let deck = new Deck();
-    deck.addPage(new Page("Killer wave","https://libraryofruina.wiki.gg/images/Distorted_Yan_sprite.png",new PageEffect.NullEffect(),[new DiceRoll(1,10,DMGType.Slash,[new DiceEffect.NullEffect()])]));
+    deck.addPage(new Page("Killer wave","/img/degraded_shockwave_mini.png","/img/degraded_shockwave.png",new PageEffect.NullEffect(),[new DiceRoll(1,10,DMGType.Slash,[new DiceEffect.NullEffect()])]));
     super(
       "Finn",
       new characterSpriteSheet("https://libraryofruina.wiki.gg/images/Finn-combat-sprite-idle.png", "https://libraryofruina.wiki.gg/images/Finn-combat-sprite-move.png", "https://libraryofruina.wiki.gg/images/Finn-combat-sprite-slash.png", "https://libraryofruina.wiki.gg/images/Finn-combat-sprite-pierce.png", "https://libraryofruina.wiki.gg/images/Finn-combat-sprite-blunt.png", "https://libraryofruina.wiki.gg/images/Finn-combat-sprite-block.png", "https://libraryofruina.wiki.gg/images/Finn-combat-sprite-evade.png", "https://libraryofruina.wiki.gg/images/Finn-combat-sprite-damaged.png", "", 1),

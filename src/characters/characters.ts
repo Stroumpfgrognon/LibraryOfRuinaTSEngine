@@ -42,7 +42,7 @@ export class Character {
     this.status = [];
     this.deck = deck;
     let handvar = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 10; i++) {
       handvar.push(deck.drawPage());
     }
     this.hand = handvar;
@@ -81,13 +81,11 @@ export class Character {
     for (const attack of this.attacks) {
       used.push(attack.pageIndex);
     }
-    console.log(used);
     for (let i = 0; i < this.hand.length; i++) {
       if (!used.includes(i)) {
         result.push(new HandPage(this.hand[i], i));
       }
     }
-    console.log(result);
     return result;
   }
 }

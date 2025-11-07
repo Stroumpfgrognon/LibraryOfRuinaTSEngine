@@ -4,17 +4,20 @@ import { DiceRoll } from "#pages/roll";
 export class Page {
   name: string;
   image: string;
+  imagebig: string;
   pageEffect: PageEffect.Effect;
   rolls: DiceRoll[];
 
   constructor(
     name: string,
     image: string,
+    imagebig: string,
     pageEffect: PageEffect.Effect,
     rolls: DiceRoll[]
   ) {
     this.name = name;
     this.image = image;
+    this.imagebig = imagebig;
     this.pageEffect = pageEffect;
     this.rolls = rolls;
   }
