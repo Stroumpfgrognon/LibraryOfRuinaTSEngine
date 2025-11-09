@@ -7,14 +7,16 @@ export class StatusEffect {
   countable: boolean;
   count: number;
   hidden: boolean;
+  nextScene: boolean = false;
 
   constructor(
     name: string,
     icon: string,
     description: string,
-    countable: boolean = false,
-    count: number = 0,
-    hidden: boolean = false
+    countable: boolean,
+    count: number,
+    hidden: boolean,
+    nextScene: boolean
   ) {
     this.name = name;
     this.icon = icon;
@@ -22,13 +24,15 @@ export class StatusEffect {
     this.countable = countable;
     this.count = count;
     this.hidden = hidden;
+    this.nextScene = nextScene;
   }
 
   getDescription(): string {
-    return this.description;
+    return this.description.replace(" X ", ` ${this.count} `);
   }
 }
 
+// Defines statuses that change count at every end of scene
 export interface ExpiringStatus {
   expire(): StatusResult | null;
 }
