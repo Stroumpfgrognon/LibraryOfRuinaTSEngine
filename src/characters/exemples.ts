@@ -4,6 +4,7 @@ import { HumanEmotionEngine } from "#characters/emotion";
 import { Health, Resistance } from "#characters/health";
 import { Character } from "#characters/characters";
 import * as Pages from "#pages/exemples";
+import { LightEngine } from "./light";
 
 export class Finn extends Character {
   constructor() {
@@ -26,6 +27,7 @@ export class Finn extends Character {
       new Health(100, 100, 100, 100, new Resistance(1, 1, 1, 1, 1, 1)),
       deck,
       new HumanEmotionEngine(),
+      new LightEngine(7),
       3,
       1,
       10

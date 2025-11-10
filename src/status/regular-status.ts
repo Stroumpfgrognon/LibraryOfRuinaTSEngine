@@ -1,6 +1,6 @@
 import { CombatTriggers } from "#triggers/triggers";
 import { StatusEffect, ExpiringStatus } from "#status/status";
-import { ExpungeStatusResult, StatusResult } from "#results/results";
+import { ExpungeStatusResult } from "#results/results";
 import { ResultMessage, StatusResultMessage } from "#results/resultlist";
 import { EffectType } from "#enums/effect";
 import { Targetting } from "#results/targets";

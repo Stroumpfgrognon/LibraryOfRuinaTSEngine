@@ -15,10 +15,12 @@ export class Page {
   imagebig: string;
   pageEffect: PageEffect.Effect;
   rolls: DiceRoll[];
+  cost: number;
 
   constructor(
     name: string,
     type: PageType,
+    cost: number,
     image: string,
     imagebig: string,
     pageEffect: PageEffect.Effect,
@@ -26,6 +28,7 @@ export class Page {
   ) {
     this.name = name;
     this.type = type;
+    this.cost = cost;
     this.image = image;
     this.imagebig = imagebig;
     this.pageEffect = pageEffect;

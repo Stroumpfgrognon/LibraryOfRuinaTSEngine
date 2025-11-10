@@ -3,7 +3,7 @@ import { DiceRoll } from "#pages/roll";
 import { DMGType } from "#enums/attack";
 import { PageEffect } from "#pages/effects";
 import { DiceEffect } from "#pages/effects";
-import { RollResult, RollResultWithStatus } from "#results/results";
+import { RollResultWithStatus } from "#results/results";
 import { RollResultMessage } from "#results/resultlist";
 import * as Statuses from "#status/regular-status";
 import { Targetting } from "#results/targets";
@@ -13,6 +13,7 @@ export class DegradedShockwave extends Page {
     super(
       "Degraded Shockwave",
       PageType.Mass_Individual,
+      5,
       "/img/degraded_shockwave_mini.png",
       "/img/degraded_shockwave.png",
       new PageEffect.OnUse(

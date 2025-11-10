@@ -7,7 +7,8 @@ import { Dice } from "#characters/dice";
 import { EmotionEngine } from "#characters/emotion";
 import { Health } from "#characters/health";
 import { TurnStats } from "#characters/stats";
-import { Attack } from "./attacks";
+import { Attack } from "#characters/attacks";
+import { LightEngine } from "#characters/light";
 
 let idCounter = 0;
 
@@ -21,6 +22,7 @@ export class Character {
   hand: Page[];
   activeHand: HandPage[] | null = null;
   emotion: EmotionEngine;
+  lightengine: LightEngine;
   turnstat: TurnStats = new TurnStats();
   dices: Dice[];
   attacks: Attack[] = [];
@@ -31,6 +33,7 @@ export class Character {
     health: Health,
     deck: Deck,
     emotion: EmotionEngine,
+    lightengine: LightEngine,
     diceamount: number,
     mindice: number,
     maxdice: number
@@ -47,6 +50,7 @@ export class Character {
     }
     this.hand = handvar;
     this.emotion = emotion;
+    this.lightengine = lightengine;
     this.dices = [];
     for (let i = 0; i < diceamount; i++) {
       this.dices.push(new Dice(mindice, maxdice));
@@ -61,17 +65,23 @@ export class Character {
   playPage(
     pageIndex: number,
     diceIndex: number,
-    ennemyIndex: number,
-    ennemyDiceIndex: number
+    enemyIndex: number,
+    enemyDiceIndex: number
   ) {
+    if (!this.lightengine.consumeLight(this.hand[pageIndex].cost)) return;
     this.attacks.push(
-      new Attack(pageIndex, diceIndex, ennemyIndex, ennemyDiceIndex)
+      new Attack(pageIndex, diceIndex, enemyIndex, enemyDiceIndex)
     );
     this.activeHand = this.getAvailablePages();
   }
 
   unplayPage(diceIndex: number) {
-    this.attacks = this.attacks.filter((attack) => attack.diceIndex !== diceIndex);
+    let attack = this.attacks.find((attack) => attack.diceIndex === diceIndex);
+    if (!attack) return;
+    this.lightengine.addLight(this.hand[attack.pageIndex].cost);
+    this.attacks = this.attacks.filter(
+      (attack) => attack.diceIndex !== diceIndex
+    );
     this.activeHand = this.getAvailablePages();
   }
 
@@ -87,5 +97,16 @@ export class Character {
       }
     }
     return result;
+  }
+
+  startOfScene() {
+    this.turnstat.reset();
+    this.deck.drawPage();
+    this.activeHand = this.getAvailablePages();
+    this.lightengine.addLight(1);
+    for (let dice of this.dices) {
+        dice.doRoll(this.turnstat.speedAdd);
+      }
+      this.dices.sort((dice1, dice2) => dice2.roll - dice1.roll);
   }
 }

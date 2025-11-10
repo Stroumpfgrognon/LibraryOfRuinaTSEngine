@@ -1,13 +1,13 @@
 export class Attack {
     pageIndex: number;
     diceIndex: number;
-    ennemyIndex: number;
-    ennemyDiceIndex: number;
+    enemyIndex: number;
+    enemyDiceIndex: number;
 
-    constructor(pageIndex: number, diceIndex: number, ennemyIndex: number, ennemyDiceIndex: number) {
+    constructor(pageIndex: number, diceIndex: number, enemyIndex: number, enemyDiceIndex: number) {
         this.pageIndex = pageIndex;
         this.diceIndex = diceIndex;
-        this.ennemyIndex = ennemyIndex;
-        this.ennemyDiceIndex = ennemyDiceIndex;
+        this.enemyIndex = enemyIndex;
+        this.enemyDiceIndex = enemyDiceIndex;
     }
 }
