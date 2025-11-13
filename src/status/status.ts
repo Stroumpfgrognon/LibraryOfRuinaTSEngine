@@ -6,6 +6,7 @@ export class StatusEffect {
   description: string;
   countable: boolean;
   count: number;
+  maxCount: number;
   hidden: boolean;
   nextScene: boolean = false;
 
@@ -15,6 +16,7 @@ export class StatusEffect {
     description: string,
     countable: boolean,
     count: number,
+    maxCount: number,
     hidden: boolean,
     nextScene: boolean
   ) {
@@ -23,12 +25,32 @@ export class StatusEffect {
     this.description = description;
     this.countable = countable;
     this.count = count;
+    this.maxCount = maxCount;
     this.hidden = hidden;
     this.nextScene = nextScene;
   }
 
   getDescription(): string {
     return this.description.replace(" X ", ` ${this.count} `);
+  }
+
+  addCount(amount: number) {
+    if (this.countable) {
+      this.count = Math.max(0, Math.min(this.count + amount, this.maxCount));
+    }
+  }
+
+  clone(): StatusEffect {
+    return new StatusEffect(
+      this.name,
+      this.icon,
+      this.description,
+      this.countable,
+      this.count,
+      this.maxCount,
+      this.hidden,
+      this.nextScene
+    );
   }
 }
 

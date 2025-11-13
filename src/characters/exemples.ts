@@ -27,7 +27,7 @@ export class Finn extends Character {
       new Health(100, 100, 100, 100, new Resistance(1, 1, 1, 1, 1, 1)),
       deck,
       new HumanEmotionEngine(),
-      new LightEngine(7),
+      new LightEngine(10),
       3,
       1,
       10

@@ -16,6 +16,7 @@ export class Burn
       "At the end of the Scene, take X damage and subtract 1/3rd of the Burn stack. (Rounds down).",
       true,
       count,
+      99,
       false,
       nextScene
     );
@@ -38,6 +39,10 @@ export class Burn
     result.addResult(this.expire());
     return result;
   }
+
+  override clone(): Burn {
+    return new Burn(this.count, this.nextScene);
+  }
 }
 
 export class Feeble
@@ -51,6 +56,7 @@ export class Feeble
       "Offensive dice used by the character lose X power. Final result does not go below 1.",
       true,
       count,
+      99,
       false,
       nextScene
     );
@@ -67,6 +73,10 @@ export class Feeble
       -this.count
     );
   }
+
+  override clone(): Feeble {
+    return new Feeble(this.count, this.nextScene);
+  }
 }
 
 export class Protection
@@ -80,6 +90,7 @@ export class Protection
       "Take X less damage from attacks. The damage is substracted before resistance multipliers are applied.",
       true,
       count,
+      99,
       false,
       nextScene
     );
@@ -97,5 +108,9 @@ export class Protection
     );
     result.addResult(this.expire());
     return result;
+  }
+
+  override clone(): Protection {
+    return new Protection(this.count, this.nextScene);
   }
 }

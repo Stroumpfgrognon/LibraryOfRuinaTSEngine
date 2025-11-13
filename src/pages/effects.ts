@@ -1,5 +1,5 @@
 import { CombatTriggers } from "#triggers/triggers";
-import { RollResultMessage } from "#results/resultlist";
+import { PageResultMessage } from "#results/resultlist";
 
 export namespace DiceEffect {
   export class Effect {
@@ -17,8 +17,8 @@ export namespace DiceEffect {
   }
 
   export class OnHit extends Effect implements CombatTriggers.OnHit {
-    effect: RollResultMessage;
-    constructor(description: string, effect: RollResultMessage) {
+    effect: PageResultMessage;
+    constructor(description: string, effect: PageResultMessage) {
       super(description);
       this.effect = effect;
     }
@@ -29,8 +29,8 @@ export namespace DiceEffect {
   }
 
   export class OnClashWin extends Effect implements CombatTriggers.OnClashWin {
-    effect: RollResultMessage;
-    constructor(description: string, effect: RollResultMessage) {
+    effect: PageResultMessage;
+    constructor(description: string, effect: PageResultMessage) {
       super(description);
       this.effect = effect;
     }
@@ -43,8 +43,8 @@ export namespace DiceEffect {
     extends Effect
     implements CombatTriggers.OnClashLose
   {
-    effect: RollResultMessage;
-    constructor(description: string, effect: RollResultMessage) {
+    effect: PageResultMessage;
+    constructor(description: string, effect: PageResultMessage) {
       super(description);
       this.effect = effect;
     }
@@ -54,8 +54,8 @@ export namespace DiceEffect {
   }
 
   export class OnDiceRoll extends Effect implements CombatTriggers.DiceRoll {
-    effect: RollResultMessage;
-    constructor(description: string, effect: RollResultMessage) {
+    effect: PageResultMessage;
+    constructor(description: string, effect: PageResultMessage) {
       super(description);
       this.effect = effect;
     }
@@ -84,8 +84,8 @@ export namespace PageEffect {
     extends Effect
     implements CombatTriggers.CombatStart
   {
-    effect: RollResultMessage;
-    constructor(description: string, effect: RollResultMessage) {
+    effect: PageResultMessage;
+    constructor(description: string, effect: PageResultMessage) {
       super(description);
       this.effect = effect;
     }
@@ -96,8 +96,8 @@ export namespace PageEffect {
   }
 
   export class OnUse extends Effect implements CombatTriggers.OnUse {
-    effect: RollResultMessage;
-    constructor(description: string, effect: RollResultMessage) {
+    effect: PageResultMessage;
+    constructor(description: string, effect: PageResultMessage) {
       super(description);
       this.effect = effect;
     }
@@ -108,8 +108,8 @@ export namespace PageEffect {
   }
 
   export class OnPlay extends Effect implements CombatTriggers.OnPlay {
-    effect: RollResultMessage;
-    constructor(description: string, effect: RollResultMessage) {
+    effect: PageResultMessage;
+    constructor(description: string, effect: PageResultMessage) {
       super(description);
       this.effect = effect;
     }

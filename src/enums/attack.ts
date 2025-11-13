@@ -2,12 +2,18 @@ export enum DMGType {
   Slash,
   Pierce,
   Blunt,
+  Pure
 }
 
 export enum AttackType {
   HP,
   Stagger,
   Mixed,
+}
+
+export enum AttackSide {
+  Ally,
+  Enemy,
 }
 
 export enum TriggerText {

@@ -1,15 +1,16 @@
 import { Attack } from "#characters/attacks";
+import { AttackSide } from "#enums/attack";
 
 export class ClashAttack {
   attack: Attack;
   characterIndex: number;
-  side: "ally" | "enemy";
+  side: AttackSide
   speed: number;
 
   constructor(
     attack: Attack,
     characterIndex: number,
-    side: "ally" | "enemy",
+    side: AttackSide,
     speed: number
   ) {
     this.attack = attack;
@@ -28,8 +29,8 @@ export class Clash {
     this.attackB = attackB;
   }
 
-  doClash(attackB: ClashAttack) :boolean {
-    if( this.attackB != null ) {
+  doClash(attackB: ClashAttack): boolean {
+    if (this.attackB != null) {
       return false;
     }
     this.attackB = attackB;

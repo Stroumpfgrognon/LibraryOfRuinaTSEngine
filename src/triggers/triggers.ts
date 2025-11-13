@@ -2,42 +2,42 @@ import { ResultMessage } from "#results/resultlist";
 
 export namespace CombatTriggers {
   export interface endOfScene {
-    endOfScene(): ResultMessage | void;
+    endOfScene(): ResultMessage;
   }
 
   export interface CombatStart {
-    combatStart(): ResultMessage | void;
+    combatStart(): ResultMessage;
   }
 
   export interface OnPlay {
-    onPlay(): ResultMessage | void;
+    onPlay(): ResultMessage;
   }
 
   export interface OnUse {
-    onUse(): ResultMessage | void;
+    onUse(): ResultMessage;
   }
 
   export interface DiceRoll {
-    onDiceRoll(): ResultMessage | void;
+    onDiceRoll(): ResultMessage;
   }
 
   export interface OnClashWin {
-    onClashWin(): ResultMessage | void;
+    onClashWin(): ResultMessage;
   }
 
   export interface OnClashLose {
-    onClashLose(): ResultMessage | void;
+    onClashLose(): ResultMessage;
   }
 
   export interface OnHit {
-    onHit(): ResultMessage | void;
+    onHit(): ResultMessage;
   }
 
   export interface OnHitReceived {
-    onHitReceived(): ResultMessage | void;
+    onHitReceived(): ResultMessage;
   }
 
   export interface Death {
-    onDeath(): ResultMessage | void;
+    onDeath(): ResultMessage;
   }
 }

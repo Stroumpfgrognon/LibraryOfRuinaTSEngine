@@ -4,7 +4,7 @@ import { DMGType } from "#enums/attack";
 import { PageEffect } from "#pages/effects";
 import { DiceEffect } from "#pages/effects";
 import { RollResultWithStatus } from "#results/results";
-import { RollResultMessage } from "#results/resultlist";
+import { PageResultMessage } from "#results/resultlist";
 import * as Statuses from "#status/regular-status";
 import { Targetting } from "#results/targets";
 
@@ -18,7 +18,7 @@ export class DegradedShockwave extends Page {
       "/img/degraded_shockwave.png",
       new PageEffect.OnUse(
         "Give 3 Protection to all allies this scene",
-        new RollResultMessage([
+        new PageResultMessage([
           new RollResultWithStatus(
             new Statuses.Protection(3, false),
             new Targetting.AlliesTarget(),
@@ -32,7 +32,7 @@ export class DegradedShockwave extends Page {
         new DiceRoll(4, 8, DMGType.Blunt, [
           new DiceEffect.OnHit(
             "Inflict 1 Feeble next scene",
-            new RollResultMessage([
+            new PageResultMessage([
               new RollResultWithStatus(
                 new Statuses.Feeble(1, true),
                 new Targetting.SingleTarget(),

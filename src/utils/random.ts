@@ -20,3 +20,16 @@ export function randomInt(a: number, b: number): number {
 
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+export function shuffleArray(array: any[]): void {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+export function shallowShuffleCopy(array: any[]): any[] {
+    const copy = array.slice();
+    shuffleArray(copy);
+    return copy;
+}

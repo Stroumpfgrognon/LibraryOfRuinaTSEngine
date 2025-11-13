@@ -4,20 +4,20 @@ import { Targetting } from "#results/targets";
 
 export class Result {
   target: Targetting.Target;
+  type: EffectType;
   value: number;
 
-  constructor(target: Targetting.Target, value: number) {
+  constructor(target: Targetting.Target, type: EffectType, value: number) {
     this.target = target;
+    this.type = type;
     this.value = value;
   }
 }
 
 export class StatusResult extends Result {
-  type: EffectType;
 
   constructor(target: Targetting.Target, type: EffectType, value: number) {
-    super(target, value);
-    this.type = type;
+    super(target, type, value);
   }
 }
 
@@ -28,11 +28,9 @@ export class ExpungeStatusResult extends StatusResult {
 }
 
 export class RollResult extends Result {
-  type: EffectType;
 
   constructor(target: Targetting.Target, type: EffectType, value: number) {
-    super(target, value);
-    this.type = type;
+    super(target, type, value);
   }
 }
 

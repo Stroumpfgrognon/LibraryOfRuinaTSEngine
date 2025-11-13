@@ -26,6 +26,7 @@ export class Character {
   turnstat: TurnStats = new TurnStats();
   dices: Dice[];
   attacks: Attack[] = [];
+  dead: boolean = false;
 
   constructor(
     name: string,
@@ -58,8 +59,10 @@ export class Character {
     this.activeHand = this.getAvailablePages();
   }
 
-  doDamage(dmgtype: DMGType, atktype: AttackType, amount: number) {
+  doDamage(dmgtype: DMGType, atktype: AttackType, amount: number) : boolean {
+    if(this.dead) return false;
     this.health.takeDamage(dmgtype, atktype, amount);
+    return true;
   }
 
   playPage(
@@ -68,6 +71,7 @@ export class Character {
     enemyIndex: number,
     enemyDiceIndex: number
   ) {
+    if(this.dead) return;
     if (!this.lightengine.consumeLight(this.hand[pageIndex].cost)) return;
     this.attacks.push(
       new Attack(pageIndex, diceIndex, enemyIndex, enemyDiceIndex)
@@ -76,6 +80,7 @@ export class Character {
   }
 
   unplayPage(diceIndex: number) {
+    if(this.dead) return;
     let attack = this.attacks.find((attack) => attack.diceIndex === diceIndex);
     if (!attack) return;
     this.lightengine.addLight(this.hand[attack.pageIndex].cost);
@@ -86,6 +91,7 @@ export class Character {
   }
 
   getAvailablePages(): HandPage[] {
+    if(this.dead) return [];
     let result = [];
     let used = [];
     for (const attack of this.attacks) {
@@ -99,7 +105,25 @@ export class Character {
     return result;
   }
 
+  inflictStatus(status: StatusEffect) : boolean {
+    if(this.dead) return false;
+    let ref = -1;
+    for (let i = 0; i < this.status.length; i++) {
+      if (this.status[i].name === status.name) {
+        ref = i;
+        break;
+      }
+    }
+    if( ref === -1) {
+      this.status.push(status.clone());
+    } else {
+      this.status[ref].addCount(status.count);
+    }
+    return true;
+  }
+
   startOfScene() {
+    if(this.dead) return;
     this.turnstat.reset();
     this.deck.drawPage();
     this.activeHand = this.getAvailablePages();
