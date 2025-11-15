@@ -25,7 +25,7 @@ export namespace Targetting {
 
   export class SingleTarget extends Target {
     constructor() {
-      super(TargetType.SELF, 1);
+      super(TargetType.PAGE_TARGETS, 1);
     }
   }
 

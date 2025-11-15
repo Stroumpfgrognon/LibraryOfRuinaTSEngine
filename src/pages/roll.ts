@@ -1,16 +1,16 @@
 import { DiceEffect } from "#pages/effects";
-import { DMGType } from "#enums/attack";
+import { DiceType } from "#enums/attack";
 
 export class DiceRoll {
   rollMin: number;
   rollMax: number;
-  type: DMGType;
+  type: DiceType;
   effects: DiceEffect.Effect[];
 
   constructor(
     rollMin: number,
     rollMax: number,
-    type: DMGType,
+    type: DiceType,
     effects: DiceEffect.Effect[]
   ) {
     this.rollMin = rollMin;

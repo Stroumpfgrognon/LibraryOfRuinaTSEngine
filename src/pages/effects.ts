@@ -53,7 +53,7 @@ export namespace DiceEffect {
     }
   }
 
-  export class OnDiceRoll extends Effect implements CombatTriggers.DiceRoll {
+  export class OnDiceRoll extends Effect implements CombatTriggers.OnDiceRoll {
     effect: PageResultMessage;
     constructor(description: string, effect: PageResultMessage) {
       super(description);
@@ -82,7 +82,7 @@ export namespace PageEffect {
 
   export class CombatStart
     extends Effect
-    implements CombatTriggers.CombatStart
+    implements CombatTriggers.OnCombatStart
   {
     effect: PageResultMessage;
     constructor(description: string, effect: PageResultMessage) {
@@ -90,7 +90,7 @@ export namespace PageEffect {
       this.effect = effect;
     }
 
-    combatStart() {
+    onCombatStart() {
       return this.effect;
     }
   }

@@ -1,12 +1,13 @@
 import { ResultMessage } from "#results/resultlist";
+import { DiceRoll } from "#pages/roll";
 
 export namespace CombatTriggers {
   export interface endOfScene {
     endOfScene(): ResultMessage;
   }
 
-  export interface CombatStart {
-    combatStart(): ResultMessage;
+  export interface OnCombatStart {
+    onCombatStart(): ResultMessage;
   }
 
   export interface OnPlay {
@@ -17,8 +18,12 @@ export namespace CombatTriggers {
     onUse(): ResultMessage;
   }
 
-  export interface DiceRoll {
-    onDiceRoll(): ResultMessage;
+  export interface OnDiceRoll {
+    onDiceRoll(roll : DiceRoll | null): ResultMessage;
+  }
+
+  export interface OnAfterDiceRoll {
+    onAfterDiceRoll(roll : DiceRoll | null): ResultMessage;
   }
 
   export interface OnClashWin {
@@ -37,7 +42,7 @@ export namespace CombatTriggers {
     onHitReceived(): ResultMessage;
   }
 
-  export interface Death {
+  export interface OnDeath {
     onDeath(): ResultMessage;
   }
 }

@@ -47,7 +47,7 @@ export class Burn
 
 export class Feeble
   extends StatusEffect
-  implements ExpiringStatus, CombatTriggers.DiceRoll
+  implements ExpiringStatus, CombatTriggers.OnDiceRoll
 {
   constructor(count: number, nextScene: boolean) {
     super(
@@ -103,7 +103,7 @@ export class Protection
   onHitReceived(): ResultMessage {
     let result = StatusResultMessage.createMessage(
       new Targetting.SelfTarget(),
-      EffectType.IncreaseDamage,
+      EffectType.IncreaseDamageReceived,
       -this.count
     );
     result.addResult(this.expire());

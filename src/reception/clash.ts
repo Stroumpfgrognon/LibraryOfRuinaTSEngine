@@ -1,16 +1,16 @@
 import { Attack } from "#characters/attacks";
-import { AttackSide } from "#enums/attack";
+import { Side } from "#enums/attack";
 
 export class ClashAttack {
   attack: Attack;
   characterIndex: number;
-  side: AttackSide
+  side: Side
   speed: number;
 
   constructor(
     attack: Attack,
     characterIndex: number,
-    side: AttackSide,
+    side: Side,
     speed: number
   ) {
     this.attack = attack;

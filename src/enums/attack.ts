@@ -1,7 +1,9 @@
-export enum DMGType {
+export enum DiceType {
   Slash,
   Pierce,
   Blunt,
+  Dodge,
+  Block,
   Pure
 }
 
@@ -11,7 +13,7 @@ export enum AttackType {
   Mixed,
 }
 
-export enum AttackSide {
+export enum Side {
   Ally,
   Enemy,
 }

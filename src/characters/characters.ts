@@ -1,9 +1,9 @@
 import { StatusEffect } from "#status/status";
-import { AttackType, DMGType } from "#enums/attack";
+import { AttackType, DiceType } from "#enums/attack";
 import { Page, HandPage } from "#pages/pages";
 import { characterSpriteSheet } from "#sprites/spritesheet";
 import { Deck } from "#characters/deck";
-import { Dice } from "#characters/dice";
+import { SpeedDice } from "#characters/dice";
 import { EmotionEngine } from "#characters/emotion";
 import { Health } from "#characters/health";
 import { TurnStats } from "#characters/stats";
@@ -24,9 +24,10 @@ export class Character {
   emotion: EmotionEngine;
   lightengine: LightEngine;
   turnstat: TurnStats = new TurnStats();
-  dices: Dice[];
+  dices: SpeedDice[];
   attacks: Attack[] = [];
   dead: boolean = false;
+  immobilized: boolean = false;
 
   constructor(
     name: string,
@@ -54,14 +55,18 @@ export class Character {
     this.lightengine = lightengine;
     this.dices = [];
     for (let i = 0; i < diceamount; i++) {
-      this.dices.push(new Dice(mindice, maxdice));
+      this.dices.push(new SpeedDice(mindice, maxdice));
     }
     this.activeHand = this.getAvailablePages();
   }
 
-  doDamage(dmgtype: DMGType, atktype: AttackType, amount: number) : boolean {
-    if(this.dead) return false;
+  doDamage(dmgtype: DiceType, atktype: AttackType, amount: number): boolean {
+    if (this.dead) return false;
     this.health.takeDamage(dmgtype, atktype, amount);
+    if (this.health.currentHP <= 0) {
+      this.health.currentHP = 0;
+      this.dead = true;
+    }
     return true;
   }
 
@@ -71,7 +76,7 @@ export class Character {
     enemyIndex: number,
     enemyDiceIndex: number
   ) {
-    if(this.dead) return;
+    if (this.dead) return;
     if (!this.lightengine.consumeLight(this.hand[pageIndex].cost)) return;
     this.attacks.push(
       new Attack(pageIndex, diceIndex, enemyIndex, enemyDiceIndex)
@@ -80,7 +85,7 @@ export class Character {
   }
 
   unplayPage(diceIndex: number) {
-    if(this.dead) return;
+    if (this.dead || this.immobilized) return;
     let attack = this.attacks.find((attack) => attack.diceIndex === diceIndex);
     if (!attack) return;
     this.lightengine.addLight(this.hand[attack.pageIndex].cost);
@@ -91,7 +96,7 @@ export class Character {
   }
 
   getAvailablePages(): HandPage[] {
-    if(this.dead) return [];
+    if (this.dead || this.immobilized) return [];
     let result = [];
     let used = [];
     for (const attack of this.attacks) {
@@ -105,8 +110,8 @@ export class Character {
     return result;
   }
 
-  inflictStatus(status: StatusEffect) : boolean {
-    if(this.dead) return false;
+  inflictStatus(status: StatusEffect): boolean {
+    if (this.dead || this.immobilized) return false;
     let ref = -1;
     for (let i = 0; i < this.status.length; i++) {
       if (this.status[i].name === status.name) {
@@ -114,7 +119,7 @@ export class Character {
         break;
       }
     }
-    if( ref === -1) {
+    if (ref === -1) {
       this.status.push(status.clone());
     } else {
       this.status[ref].addCount(status.count);
@@ -122,15 +127,33 @@ export class Character {
     return true;
   }
 
+  immobilize(): boolean {
+    if (this.dead || this.immobilized) return false;
+    this.immobilized = true;
+    this.attacks = [];
+    for (let dice of this.dices) {
+      dice.locked = true;
+    }
+    return true;
+  }
+
   startOfScene() {
-    if(this.dead) return;
-    this.turnstat.reset();
+    if (this.dead) return;
+    if (this.immobilized) {
+      this.immobilized = false;
+      for (let dice of this.dices) {
+        dice.locked = false;
+      }
+    }
     this.deck.drawPage();
     this.activeHand = this.getAvailablePages();
     this.lightengine.addLight(1);
     for (let dice of this.dices) {
-        dice.doRoll(this.turnstat.speedAdd);
-      }
-      this.dices.sort((dice1, dice2) => dice2.roll - dice1.roll);
+      dice.doRoll(this.turnstat.speedAdd);
+    }
+    this.turnstat.reset();
+    this.dices.sort((dice1, dice2) => dice2.roll - dice1.roll);
   }
+
+  // onDiceRoll(dice, handler)
 }

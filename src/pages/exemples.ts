@@ -1,6 +1,6 @@
 import { Page, PageType } from "#pages/pages";
 import { DiceRoll } from "#pages/roll";
-import { DMGType } from "#enums/attack";
+import { DiceType } from "#enums/attack";
 import { PageEffect } from "#pages/effects";
 import { DiceEffect } from "#pages/effects";
 import { RollResultWithStatus } from "#results/results";
@@ -27,9 +27,9 @@ export class DegradedShockwave extends Page {
         ])
       ),
       [
-        new DiceRoll(3, 8, DMGType.Blunt, [new DiceEffect.NullEffect()]),
-        new DiceRoll(3, 8, DMGType.Blunt, [new DiceEffect.NullEffect()]),
-        new DiceRoll(4, 8, DMGType.Blunt, [
+        new DiceRoll(3, 8, DiceType.Blunt, [new DiceEffect.NullEffect()]),
+        new DiceRoll(3, 8, DiceType.Blunt, [new DiceEffect.NullEffect()]),
+        new DiceRoll(4, 8, DiceType.Blunt, [
           new DiceEffect.OnHit(
             "Inflict 1 Feeble next scene",
             new PageResultMessage([

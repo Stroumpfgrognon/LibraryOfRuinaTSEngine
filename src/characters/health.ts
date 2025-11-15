@@ -1,4 +1,4 @@
-import { DMGType, AttackType } from "#enums/attack";
+import { DiceType, AttackType } from "#enums/attack";
 export class Resistance {
   SlashHP: number;
   PierceHP: number;
@@ -23,17 +23,26 @@ export class Resistance {
     this.BluntStagger = bluntStagger;
   }
 
-  calculateDamage(type: DMGType, amount: number, isStagger: boolean): number {
+  calculateDamage(
+    type: DiceType,
+    amount: number,
+    isStagger: boolean,
+    staggered: boolean
+  ): number {
+    if (staggered) {
+      if(type != DiceType.Pure) return 2 * amount;
+      return amount;
+    } 
     switch (type) {
-      case DMGType.Slash:
+      case DiceType.Slash:
         return isStagger
           ? amount * (1 - this.SlashStagger / 100)
           : amount * (1 - this.SlashHP / 100);
-      case DMGType.Pierce:
+      case DiceType.Pierce:
         return isStagger
           ? amount * (1 - this.PierceStagger / 100)
           : amount * (1 - this.PierceHP / 100);
-      case DMGType.Blunt:
+      case DiceType.Blunt:
         return isStagger
           ? amount * (1 - this.BluntStagger / 100)
           : amount * (1 - this.BluntHP / 100);
@@ -49,6 +58,7 @@ export class Health {
   maxStagger: number;
   currentStagger: number;
   resistance: Resistance;
+  staggered: boolean = false;
 
   constructor(
     maxHealth: number,
@@ -64,12 +74,13 @@ export class Health {
     this.resistance = resistance;
   }
 
-  takeDamage(dmgtype: DMGType, type: AttackType, amount: number): void {
+  takeDamage(dmgtype: DiceType, type: AttackType, amount: number): void {
     if (type === AttackType.HP || type === AttackType.Mixed) {
       const damageToHealth = this.resistance.calculateDamage(
         dmgtype,
         amount,
-        false
+        false,
+        this.staggered
       );
       this.currentHP -= damageToHealth;
       if (this.currentHP < 0) this.currentHP = 0;
@@ -78,10 +89,25 @@ export class Health {
       const damageToStagger = this.resistance.calculateDamage(
         dmgtype,
         amount,
-        true
+        true,
+        this.staggered
       );
       this.currentStagger -= damageToStagger;
-      if (this.currentStagger < 0) this.currentStagger = 0;
+      if (this.currentStagger <= 0) {
+        this.currentStagger = 0;
+        this.stagger();
+      }
+    }
+  }
+
+  stagger(): void {
+    this.staggered = true;
+  }
+
+  staggerHeal(): void {
+    if (this.staggered) {
+      this.currentStagger = this.maxStagger;
+      this.staggered = false;
     }
   }
 }

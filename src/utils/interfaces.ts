@@ -20,14 +20,54 @@ export const isTSInterface = <T>(
 };
 
 export function isCombatStart(value: any) {
-  return isTSInterface<CombatTriggers.CombatStart>(
+  return isTSInterface<CombatTriggers.OnCombatStart>(
     value,
-    ["combatStart"],
-    ["combatStart"],
+    ["onCombatStart"],
+    ["onCombatStart"],
     true
   );
 }
 
 export function isOnUse(value: any) {
   return isTSInterface<CombatTriggers.OnUse>(value, ["onUse"], ["onUse"], true);
+}
+
+export function isOnRoll(value: any) {
+  return isTSInterface<CombatTriggers.OnDiceRoll>(
+    value,
+    ["onDiceRoll"],
+    ["onDiceRoll"],
+    true
+  );
+}
+
+export function isOnAfterRoll(value: any) {
+  return isTSInterface<CombatTriggers.OnAfterDiceRoll>(
+    value,
+    ["onAfterDiceRoll"],
+    ["onAfterDiceRoll"],
+    true
+  );
+}
+
+export function isOnHit(value: any) {
+  return isTSInterface<CombatTriggers.OnHit>(value, ["onHit"], ["onHit"], true);
+}
+
+export function isOnHitReceived(value: any) {
+  return isTSInterface<CombatTriggers.OnHitReceived>(
+    value,
+    ["onHitReceived"],
+    ["onHitReceived"],
+    true
+  );
+}
+
+export function isOnDeath(value: any) {
+  return isTSInterface<CombatTriggers.OnDeath>(
+    value,
+    ["onDeath"],
+    ["onDeath"],
+    true
+  );
 }

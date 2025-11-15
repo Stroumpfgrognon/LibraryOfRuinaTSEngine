@@ -5,13 +5,16 @@
 export enum EffectType {
   Damage,
   StaggerDamage,
-  IncreaseDamage,
+  IncreaseDamageReceived,
+  IncreaseSTDamageReceived,
+  AddDamageMult,
+  AddSTDamageMult,
+  IncreaseDamageDealt,
+  AddDamageDealtMult,
+  IncreaseSTDamageDealt,
+  AddSTDamageDealtMult,
   IncreaseRollOffensive,
-  /**If present, at 0 minimizes roll, at 1 maximizes roll*/
-  MaximiseRollOffensive,
   IncreaseRollDefensive,
-  /** If present, at 0 minimizes roll, at 1 maximizes roll */
-  MaximiseRollDefensive,
   IncreaseSpeed,
   NullifyPower,
   Immobilize,

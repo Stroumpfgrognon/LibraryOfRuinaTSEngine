@@ -1,12 +1,12 @@
-export class Dice {
+export class SpeedDice {
     minroll : number;
     maxroll : number;
-    broken : boolean;
+    broken : boolean = false;
+    locked : boolean = false;
     roll : number;
     constructor(minroll: number, maxroll: number) {
         this.minroll = minroll;
         this.maxroll = maxroll;
-        this.broken = false;
         this.roll = -1;
     }
 
