@@ -60,9 +60,18 @@ export class Character {
     this.activeHand = this.getAvailablePages();
   }
 
-  doDamage(dmgtype: DiceType, atktype: AttackType, amount: number): boolean {
+  doDamage(
+    dmgtype: DiceType,
+    atktype: AttackType,
+    amount: number,
+    opposingTurnstat: TurnStats = new TurnStats()
+  ): boolean {
     if (this.dead) return false;
-    this.health.takeDamage(dmgtype, atktype, amount);
+    if (dmgtype == DiceType.Pure) {
+      this.health.takeDamage(dmgtype, atktype, amount, this.turnstat);
+    } else {
+      this.health.takeDamage(dmgtype, atktype, amount, this.turnstat, opposingTurnstat);
+    }
     if (this.health.currentHP <= 0) {
       this.health.currentHP = 0;
       this.dead = true;
@@ -70,17 +79,10 @@ export class Character {
     return true;
   }
 
-  playPage(
-    pageIndex: number,
-    diceIndex: number,
-    enemyIndex: number,
-    enemyDiceIndex: number
-  ) {
+  playPage(pageIndex: number, diceIndex: number, enemyIndex: number, enemyDiceIndex: number) {
     if (this.dead) return;
     if (!this.lightengine.consumeLight(this.hand[pageIndex].cost)) return;
-    this.attacks.push(
-      new Attack(pageIndex, diceIndex, enemyIndex, enemyDiceIndex)
-    );
+    this.attacks.push(new Attack(pageIndex, diceIndex, enemyIndex, enemyDiceIndex));
     this.activeHand = this.getAvailablePages();
   }
 
@@ -89,9 +91,7 @@ export class Character {
     let attack = this.attacks.find((attack) => attack.diceIndex === diceIndex);
     if (!attack) return;
     this.lightengine.addLight(this.hand[attack.pageIndex].cost);
-    this.attacks = this.attacks.filter(
-      (attack) => attack.diceIndex !== diceIndex
-    );
+    this.attacks = this.attacks.filter((attack) => attack.diceIndex !== diceIndex);
     this.activeHand = this.getAvailablePages();
   }
 

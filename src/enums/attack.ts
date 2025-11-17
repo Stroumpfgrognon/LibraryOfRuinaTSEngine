@@ -16,6 +16,7 @@ export enum AttackType {
 export enum Side {
   Ally,
   Enemy,
+  NA
 }
 
 export enum TriggerText {

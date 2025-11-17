@@ -52,7 +52,7 @@ export class Feeble
   constructor(count: number, nextScene: boolean) {
     super(
       "Feeble",
-      "https://libraryofruina.wiki.gg/images/thumb/FragileIcon.png/26px-FragileIcon.png",
+      "https://libraryofruina.wiki.gg/images/thumb/FeebleIcon.png/26px-FeebleIcon.png",
       "Offensive dice used by the character lose X power. Final result does not go below 1.",
       true,
       count,
@@ -81,7 +81,7 @@ export class Feeble
 
 export class Protection
   extends StatusEffect
-  implements ExpiringStatus, CombatTriggers.OnHitReceived
+  implements ExpiringStatus, CombatTriggers.OnDiceRoll
 {
   constructor(count: number, nextScene: boolean) {
     super(
@@ -100,7 +100,7 @@ export class Protection
     return new ExpungeStatusResult();
   }
 
-  onHitReceived(): ResultMessage {
+  onDiceRoll(): ResultMessage {
     let result = StatusResultMessage.createMessage(
       new Targetting.SelfTarget(),
       EffectType.IncreaseDamageReceived,

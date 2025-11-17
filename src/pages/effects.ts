@@ -1,13 +1,17 @@
 import { CombatTriggers } from "#triggers/triggers";
 import { PageResultMessage } from "#results/resultlist";
 
-export namespace DiceEffect {
-  export class Effect {
-    description: string;
+export class Effect {
+  description: string;
 
-    constructor(description: string) {
-      this.description = description;
-    }
+  constructor(description: string) {
+    this.description = description;
+  }
+}
+
+export namespace DiceEffect {
+
+  export class DiceEffect extends Effect {
   }
 
   export class NullEffect extends Effect {
@@ -39,10 +43,7 @@ export namespace DiceEffect {
     }
   }
 
-  export class OnClashLose
-    extends Effect
-    implements CombatTriggers.OnClashLose
-  {
+  export class OnClashLose extends Effect implements CombatTriggers.OnClashLose {
     effect: PageResultMessage;
     constructor(description: string, effect: PageResultMessage) {
       super(description);
@@ -66,12 +67,8 @@ export namespace DiceEffect {
 }
 
 export namespace PageEffect {
-  export class Effect {
-    description: string;
 
-    constructor(description: string) {
-      this.description = description;
-    }
+  export class PageEffect extends Effect {
   }
 
   export class NullEffect extends Effect {
@@ -80,10 +77,7 @@ export namespace PageEffect {
     }
   }
 
-  export class CombatStart
-    extends Effect
-    implements CombatTriggers.OnCombatStart
-  {
+  export class CombatStart extends Effect implements CombatTriggers.OnCombatStart {
     effect: PageResultMessage;
     constructor(description: string, effect: PageResultMessage) {
       super(description);

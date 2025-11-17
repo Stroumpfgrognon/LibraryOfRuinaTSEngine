@@ -30,6 +30,6 @@ export class Deck {
       roll = getRandomInt(this.pages.length);
     }
     this.seenPages.push(roll);
-    return this.pages[roll];
+    return this.pages[roll].copy();
   }
 }

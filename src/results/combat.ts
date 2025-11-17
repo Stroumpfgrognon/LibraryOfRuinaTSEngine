@@ -1,78 +1,55 @@
-import { TurnStats } from "#characters/stats";
-import { AttackType } from "#enums/attack";
+import { Side } from "#enums/attack";
 import { Page } from "#pages/pages";
 import { DiceRoll } from "#pages/roll";
+import { ResultMessage } from "./resultlist";
 
-export class CombatResult {
+export class Diceclash {
   allyIndex: number;
   enemyIndex: number;
-  allyStat: TurnStats;
-  enemyStat: TurnStats;
   pageAlly: Page | null;
   pageEnemy: Page | null;
   diceAlly: DiceRoll | null;
   diceEnemy: DiceRoll | null;
-  rollAlly: number;
-  rollEnemy: number;
-  damageAlly: number;
-  damageEnemy: number;
-  type : AttackType;
   mass: boolean = false;
 
-  constructor(
-    allyIndex: number,
-    enemyIndex: number,
-    allyStat: TurnStats,
-    enemyStat: TurnStats,
-    pageAlly: Page | null,
-    pageEnemy: Page | null,
-    diceAlly: DiceRoll | null,
-    diceEnemy: DiceRoll | null,
-    rollAlly: number,
-    rollEnemy: number,
-    damageAlly: number,
-    damageEnemy: number,
-    type : AttackType,
-    mass: boolean = false
-  ) {
+  constructor(allyIndex: number, enemyIndex: number, pageAlly: Page | null, pageEnemy: Page | null, diceAlly: DiceRoll | null, diceEnemy: DiceRoll | null, mass: boolean = false) {
     this.allyIndex = allyIndex;
     this.enemyIndex = enemyIndex;
     this.pageAlly = pageAlly;
     this.pageEnemy = pageEnemy;
     this.diceAlly = diceAlly;
     this.diceEnemy = diceEnemy;
-    this.rollAlly = rollAlly;
-    this.rollEnemy = rollEnemy;
-    this.damageAlly = damageAlly;
-    this.damageEnemy = damageEnemy;
-    this.type = type;
-    this.allyStat = allyStat;
-    this.enemyStat = enemyStat;
     this.mass = mass;
   }
-
-  static directDamage(
-    allyIndex: number,
-    enemyIndex: number,
-    damageAlly: number,
-    damageEnemy: number,
-    type : AttackType
-  ) : CombatResult {
-    return new CombatResult(
-      allyIndex,
-      enemyIndex,
-        new TurnStats(),
-        new TurnStats(),
-        null,
-        null,
-        null,
-        null,
-        -1,
-        -1,
-        damageAlly,
-        damageEnemy,
-        type,
-        false
-    );
 }
+
+export class CombatSecondaryEffect {
+  originIndex: number;
+  targetIndex: number;
+  side: Side;
+  effects: ResultMessage[];
+
+  constructor(originIndex: number, targetIndex: number, side: Side, effects: ResultMessage[]) {
+    this.originIndex = originIndex;
+    this.targetIndex = targetIndex;
+    this.side = side;
+    this.effects = effects;
+  }
+}
+
+export class EndOfDiceclash extends CombatSecondaryEffect {
+  constructor() {
+    super(-1, -1, Side.NA, []);
+  }
+}
+
+export class EndOfClash extends CombatSecondaryEffect {
+  constructor() {
+    super(-2, -2, Side.NA, []);
+  }
+}
+
+
+export class RollResult {
+  
 }
