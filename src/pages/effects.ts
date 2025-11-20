@@ -9,6 +9,7 @@ export class Effect {
   }
 }
 
+/** Simple dice effects that will work for most basic dice */
 export namespace DiceEffect {
 
   export class DiceEffect extends Effect {
@@ -66,6 +67,7 @@ export namespace DiceEffect {
   }
 }
 
+/** Simple page effects that will work for most basic pages */
 export namespace PageEffect {
 
   export class PageEffect extends Effect {

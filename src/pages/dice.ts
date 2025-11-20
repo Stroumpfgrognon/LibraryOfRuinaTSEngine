@@ -6,20 +6,21 @@ export class DiceRoll {
   rollMax: number;
   type: DiceType;
   effects: DiceEffect.DiceEffect[];
-  broken: boolean = false;
+  result : number = 0;
+  used : boolean = false;
 
   constructor(
     rollMin: number,
     rollMax: number,
     type: DiceType,
     effects: DiceEffect.DiceEffect[],
-    broken: boolean = false
+    used: boolean = false
   ) {
     this.rollMin = rollMin;
     this.rollMax = rollMax;
     this.type = type;
     this.effects = effects;
-    this.broken = broken;
+    this.used = used;
   }
 
   copy() : DiceRoll {
@@ -28,7 +29,7 @@ export class DiceRoll {
       this.rollMax,
       this.type,
       this.effects,
-      this.broken
+      this.used
     );
   }
 }

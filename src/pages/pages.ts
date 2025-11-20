@@ -1,5 +1,5 @@
 import { PageEffect } from "#pages/effects";
-import { DiceRoll } from "#pages/roll";
+import { DiceRoll } from "#pages/dice";
 
 export enum PageType {
   Melee,

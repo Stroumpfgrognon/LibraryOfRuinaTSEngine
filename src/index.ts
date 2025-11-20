@@ -24,7 +24,7 @@ export * from '#enums/emotion';
 // Pages / UI
 export * from '#pages/pages';
 export * from '#pages/effects';
-export * from '#pages/roll';
+export * from '#pages/dice';
 
 // Reception
 export * from '#reception/reception';

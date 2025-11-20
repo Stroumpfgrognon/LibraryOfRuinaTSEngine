@@ -1,5 +1,5 @@
 import { Page, PageType } from "#pages/pages";
-import { DiceRoll } from "#pages/roll";
+import { DiceRoll } from "#pages/dice";
 import { DiceType } from "#enums/attack";
 import { PageEffect } from "#pages/effects";
 import { DiceEffect } from "#pages/effects";

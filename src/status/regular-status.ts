@@ -106,7 +106,6 @@ export class Protection
       EffectType.IncreaseDamageReceived,
       -this.count
     );
-    result.addResult(this.expire());
     return result;
   }
 

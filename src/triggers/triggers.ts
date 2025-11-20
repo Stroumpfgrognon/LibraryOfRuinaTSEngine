@@ -1,5 +1,7 @@
 import { ResultMessage } from "#results/resultlist";
-import { DiceRoll } from "#pages/roll";
+import { DiceRoll } from "#pages/dice";
+import { Clash } from "#reception/clash";
+import { Side } from "#enums/attack";
 
 export namespace CombatTriggers {
   export interface endOfScene {
@@ -15,7 +17,7 @@ export namespace CombatTriggers {
   }
 
   export interface OnUse {
-    onUse(): ResultMessage;
+    onUse(clash : Clash, side: Side): ResultMessage;
   }
 
   export interface OnDiceRoll {

@@ -11,7 +11,7 @@ export class SpeedDice {
     }
 
     doRoll(modifier: number = 0) : number {
-        if (this.broken) {
+        if (this.broken || this.locked) {
             return -1;
         }
         this.roll = Math.floor(Math.random() * (this.maxroll - this.minroll + 1)) + this.minroll + modifier;
