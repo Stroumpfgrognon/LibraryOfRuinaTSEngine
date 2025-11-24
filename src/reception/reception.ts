@@ -15,7 +15,7 @@ import {
   isOnRoll,
   isOnUse,
 } from "#utils/interfaces";
-import { Side, AttackType, DiceType } from "#enums/attack";
+import { Side, AttackType, DiceType, AttackRange } from "#enums/attack";
 import { ResultMessage } from "#results/resultlist";
 import { TargetType } from "#results/targets";
 import { EffectType } from "#enums/effect";
@@ -23,6 +23,7 @@ import { RollResultWithStatus } from "#results/results";
 import { Effect } from "#pages/effects";
 import { TriggersEnum } from "#enums/triggers";
 import { DiceRoll } from "#pages/dice";
+import { Attack, TurnStats } from "..";
 
 export class Reception {
   allies: Character[];
@@ -107,17 +108,39 @@ export class Reception {
     attacks.sort(
       (a, b) => b.speed + 0.5 * (b.side == Side.Enemy ? 1 : 0) - a.speed - 0.5 * (a.side == Side.Enemy ? 1 : 0)
     );
+    // attacks.sort(
+    //   (a, b) => b.speed + 0.5 * (b.side == Side.Enemy ? 1 : 0) + (b.attack.attackRange == AttackRange.Mass ? (b.side == Side.Ally ? 2000 : 1000) : 0) + (b.attack.attackRange == AttackRange.Ranged ? 500 : 0) - a.speed - 0.5 * (a.side == Side.Enemy ? 1 : 0) - (a.attack.attackRange == AttackRange.Mass ? (a.side == Side.Ally ? 2000 : 1000) : 0) - (a.attack.attackRange == AttackRange.Ranged ? 500 : 0)
+    // );
     let clashes: Clash[] = [];
 
     for (let attack of attacks) {
-      if (attack.side == Side.Ally) {
+      if (attack.attack.attackRange == AttackRange.Mass) {
+        // Mass attack, automatically hits all opponents
+        let extra_targets: Attack[] = [];
+        if (attack.side == Side.Ally) {
+          for (let i = 0; i < this.enemies.length; i++) {
+            if (i != attack.attack.foeIndex) {
+              extra_targets.push(Attack.massTarget(i, randomInt(0, this.enemies[i].dices.length - 1)));
+            }
+          }
+        } else {
+          for (let i = 0; i < this.allies.length; i++) {
+            if (i != attack.attack.foeIndex) {
+              extra_targets.push(Attack.massTarget(i, randomInt(0, this.allies[i].dices.length - 1)));
+            }
+          }
+        }
+        clashes.push(new Clash(attack, null, true, extra_targets));
+        continue;
+      } else if (attack.side == Side.Ally) {
         let clashed = false;
         for (let clash of clashes) {
           if (
             clash.attackA.side == Side.Enemy &&
-            clash.attackA.characterIndex == attack.attack.enemyIndex &&
-            clash.attackA.attack.enemyDiceIndex == attack.attack.diceIndex &&
-            attack.attack.enemyDiceIndex == clash.attackA.attack.diceIndex
+            clash.attackA.characterIndex == attack.attack.foeIndex &&
+            clash.attackA.attack.foeDiceIndex == attack.attack.diceIndex &&
+            attack.attack.foeDiceIndex == clash.attackA.attack.diceIndex &&
+            !clash.mass
           ) {
             if (clash.doClash(attack)) {
               clashed = true;
@@ -128,14 +151,14 @@ export class Reception {
         if (!clashed) {
           clashes.push(new Clash(attack, null));
         }
-      }
-      if (attack.side == Side.Enemy) {
+      } else if (attack.side == Side.Enemy) {
         let potentialClashes = clashes.filter(
           (clash) =>
             clash.attackA.side == Side.Ally &&
-            clash.attackA.attack.enemyIndex == attack.characterIndex &&
-            clash.attackA.attack.enemyDiceIndex == attack.attack.diceIndex &&
-            clash.attackB == null
+            clash.attackA.attack.foeIndex == attack.characterIndex &&
+            clash.attackA.attack.foeDiceIndex == attack.attack.diceIndex &&
+            clash.attackB == null &&
+            !clash.mass
         );
         if (potentialClashes.length >= 1) {
           potentialClashes.sort((a, b) => b.attackA.attack.index - a.attackA.attack.index);
@@ -155,27 +178,32 @@ export class Reception {
       if (clash.attackA.side == Side.Ally) {
         allyIndex = clash.attackA.characterIndex;
         allyPage = this.allies[allyIndex].hand[clash.attackA.attack.pageIndex];
-        enemyIndex = clash.attackB ? clash.attackB.characterIndex : clash.attackA.attack.enemyIndex;
+        enemyIndex = clash.attackB ? clash.attackB.characterIndex : clash.attackA.attack.foeIndex;
         enemyPage = clash.attackB ? this.enemies[enemyIndex].hand[clash.attackB.attack.pageIndex] : null;
       } else {
         enemyIndex = clash.attackA.characterIndex;
         enemyPage = this.enemies[enemyIndex].hand[clash.attackA.attack.pageIndex];
-        allyIndex = clash.attackB ? clash.attackB.characterIndex : clash.attackA.attack.enemyIndex;
+        allyIndex = clash.attackB ? clash.attackB.characterIndex : clash.attackA.attack.foeIndex;
         allyPage = clash.attackB ? this.allies[allyIndex].hand[clash.attackB.attack.pageIndex] : null;
       }
-      clashPages.push(new ClashFull(allyIndex, enemyIndex, allyPage, enemyPage));
+      if (clash.attackA.attack.attackRange == AttackRange.Mass) {
+        clashPages.push(new ClashFull(allyIndex, enemyIndex, allyPage, enemyPage, AttackRange.Mass, clash.attackA.side, clash.attackA.speed, clash.extra_targets));
+      } else {
+        clashPages.push(new ClashFull(allyIndex, enemyIndex, allyPage, enemyPage));
+      }
     }
-    let clashMass = clashPages.filter((c) => c.priority_level == 2);
+    let clashMass = clashPages.filter((c) => c.priority_level == AttackRange.Mass);
     clashMass.sort((a, b) => {
       if (a.mass_side == Side.Ally && b.mass_side == Side.Enemy) return 1;
       if (a.mass_side == Side.Enemy && b.mass_side == Side.Ally) return -1;
-      return b.mass_speed - a.mass_speed;
+      return b.mass_speed + (b.mass_side == Side.Ally ? 500 : 0)- a.mass_speed - (a.mass_side == Side.Ally ? 500 : 0);
     });
-    let clashRanged = clashPages.filter((c) => c.priority_level == 1);
-    let clashMelee = clashPages.filter((c) => c.priority_level == 0);
-    clashPages = clashMass.concat(clashRanged,clashMelee); // We prepare order for combat
+    let clashRanged = clashPages.filter((c) => c.priority_level == AttackRange.Ranged);
+    let clashMelee = clashPages.filter((c) => c.priority_level == AttackRange.Melee);
+    clashPages = clashMass.concat(clashRanged, clashMelee); // We prepare order for combat
     this.clashToDate = true;
     this.clashPages = clashPages;
+    console.log(clashes, clashPages);
     return clashes;
   }
 
@@ -250,152 +278,155 @@ export class Reception {
             allyIndex
           );
       }
-
-      let ally = this.allies[allyIndex];
-      let enemy = this.enemies[enemyIndex];
-      let diceAlly,
-        diceEnemy: DiceRoll | null = null;
-      if (allyPage) {
-        for (let i = this.diceStep; i < allyPage.rolls.length; i++) {
-          if (!allyPage.rolls[i].used) {
-            diceAlly = allyPage.rolls[i];
-            diceAlly.used = true;
-            break;
+      if (clash.priority_level != AttackRange.Mass) {
+        let ally = this.allies[allyIndex];
+        let enemy = this.enemies[enemyIndex];
+        let diceAlly: DiceRoll | null = null,
+          diceEnemy: DiceRoll | null = null;
+        if (allyPage) {
+          for (let i = this.diceStep; i < allyPage.rolls.length; i++) {
+            if (!allyPage.rolls[i].used) {
+              diceAlly = allyPage.rolls[i];
+              diceAlly.used = true;
+              break;
+            }
           }
         }
-      }
-      if (enemyPage) {
-        for (let i = this.diceStep; i < enemyPage.rolls.length; i++) {
-          if (!enemyPage.rolls[i].used) {
-            diceEnemy = enemyPage.rolls[i];
-            diceEnemy.used = true;
-            break;
+        if (enemyPage) {
+          for (let i = this.diceStep; i < enemyPage.rolls.length; i++) {
+            if (!enemyPage.rolls[i].used) {
+              diceEnemy = enemyPage.rolls[i];
+              diceEnemy.used = true;
+              break;
+            }
           }
         }
-      }
-      if (!diceAlly && !diceEnemy) {
-        this.combatStep++;
-        this.diceStep = 0;
-        continue;
-      }
-      // First, before roll statuses
-      if (diceAlly) this.queryEffects(TriggersEnum.onDiceRoll, ally.status, Side.Ally, allyIndex, enemyIndex, diceAlly);
-      if (diceEnemy)
-        this.queryEffects(TriggersEnum.onDiceRoll, enemy.status, Side.Enemy, enemyIndex, allyIndex, diceEnemy);
-      // Then clash resolution
-      let allyStats = ally.turnstat;
-      let enemyStats = enemy.turnstat;
-      resultAlly = randomInt(diceAlly ? diceAlly.rollMin : 0, diceAlly ? diceAlly.rollMax : 0);
-      if (diceAlly) diceAlly.result = resultAlly;
-      this.queryEffects(
-        TriggersEnum.onAfterDiceRoll,
-        diceAlly ? diceAlly.effects : [],
-        Side.Ally,
-        allyIndex,
-        enemyIndex,
-        diceAlly
-      );
-      this.queryEffects(TriggersEnum.onAfterDiceRoll, ally.status, Side.Ally, allyIndex, enemyIndex, diceAlly);
-      if (diceAlly && (diceAlly.type == DiceType.Dodge || diceAlly.type == DiceType.Block))
-        resultAlly += allyStats.defPowerAdd * allyStats.defPowerMult;
-      else resultAlly += allyStats.atkPowerAdd * allyStats.atkPowerMult;
-      resultEnemy = randomInt(diceEnemy ? diceEnemy.rollMin : 0, diceEnemy ? diceEnemy.rollMax : 0);
-      if (diceEnemy) diceEnemy.result = resultEnemy;
-      this.queryEffects(
-        TriggersEnum.onAfterDiceRoll,
-        diceEnemy ? diceEnemy.effects : [],
-        Side.Enemy,
-        enemyIndex,
-        allyIndex,
-        diceEnemy
-      );
-      this.queryEffects(TriggersEnum.onAfterDiceRoll, enemy.status, Side.Enemy, enemyIndex, allyIndex, diceEnemy);
-      if (diceEnemy && (diceEnemy.type == DiceType.Dodge || diceEnemy.type == DiceType.Block))
-        resultEnemy += enemyStats.defPowerAdd * enemyStats.defPowerMult;
-      else resultEnemy += enemyStats.atkPowerAdd * enemyStats.atkPowerMult;
-      let winner,
-        looser,
-        resultWinner,
-        resultLooser,
-        diceWinner,
-        diceLooser,
-        winnerIndex,
-        looserIndex,
-        winnerSide,
-        looserSide,
-        looserStat;
-      if (resultAlly > resultEnemy || (diceAlly && !diceEnemy)) {
-        winner = ally;
-        looser = enemy;
-        resultWinner = resultAlly;
-        resultLooser = resultEnemy;
-        diceWinner = diceAlly;
-        diceLooser = diceEnemy;
-        winnerIndex = allyIndex;
-        looserIndex = enemyIndex;
-        winnerSide = Side.Ally;
-        looserSide = Side.Enemy;
-        looserStat = enemyStats;
-      } else if (resultEnemy > resultAlly || (diceEnemy && !diceAlly)) {
-        winner = enemy;
-        looser = ally;
-        resultWinner = resultEnemy;
-        resultLooser = resultAlly;
-        diceWinner = diceEnemy;
-        diceLooser = diceAlly;
-        winnerIndex = enemyIndex;
-        looserIndex = allyIndex;
-        winnerSide = Side.Enemy;
-        looserSide = Side.Ally;
-        looserStat = allyStats;
-      } else {
-        winnerSide = Side.NA;
-      }
-      if (diceAlly && diceEnemy && winner) {
-        // Clash with both dices played
-        this.queryEffects(TriggersEnum.onClashWin, diceWinner!.effects, winnerSide!, winnerIndex!, looserIndex!);
-        this.queryEffects(TriggersEnum.onClashWin, winner!.status, winnerSide!, winnerIndex!, looserIndex!);
-        this.queryEffects(TriggersEnum.onClashLose, diceLooser!.effects, looserSide!, looserIndex!, winnerIndex!);
-        this.queryEffects(TriggersEnum.onClashLose, looser!.status, looserSide!, looserIndex!, winnerIndex!);
-
-        if (
-          diceWinner!.type == DiceType.Dodge &&
-          diceLooser!.type != DiceType.Dodge &&
-          diceLooser!.type != DiceType.Block
-        ) {
-          winner!.doDamage(DiceType.Dodge, AttackType.Stagger, -resultWinner!, looserStat);
-        } else if (diceWinner!.type == DiceType.Block) {
-          looser!.doDamage(DiceType.Block, AttackType.Stagger, resultWinner! - resultLooser!, looserStat);
-        } else if (diceWinner!.type != DiceType.Dodge) {
-          looser!.doDamage(
-            DiceType.Pure,
-            AttackType.Mixed,
-            diceLooser!.type == DiceType.Block ? resultWinner! - resultLooser! : resultWinner!,
-            looserStat
-          );
-          this.queryEffects(TriggersEnum.onHit, diceWinner!.effects, winnerSide!, winnerIndex!, looserIndex!);
-          this.queryEffects(TriggersEnum.onHit, winner!.status, winnerSide!, winnerIndex!, looserIndex!);
+        if (!diceAlly && !diceEnemy) {
+          this.combatStep++;
+          this.diceStep = 0;
+          continue;
         }
-      } else if (!diceLooser && diceWinner) {
-        // Unilateral hit with one dice played
-        if (diceWinner.type != DiceType.Dodge && diceWinner.type != DiceType.Block) {
-          looser!.doDamage(diceWinner.type, AttackType.Mixed, resultWinner!, looserStat);
-          this.queryEffects(TriggersEnum.onHit, diceWinner.effects, winnerSide!, winnerIndex!, looserIndex!);
-          this.queryEffects(TriggersEnum.onHit, winner!.status, winnerSide!, winnerIndex!, looserIndex!);
-          this.queryEffects(TriggersEnum.onHitReceived, looser!.status, looserSide!, looserIndex!, winnerIndex!);
+        // First, before roll statuses
+        if (diceAlly)
+          this.queryEffects(TriggersEnum.onDiceRoll, ally.status, Side.Ally, allyIndex, enemyIndex, diceAlly);
+        if (diceEnemy)
+          this.queryEffects(TriggersEnum.onDiceRoll, enemy.status, Side.Enemy, enemyIndex, allyIndex, diceEnemy);
+        // Then clash resolution
+        let allyStats = ally.turnstat;
+        let enemyStats = enemy.turnstat;
+        resultAlly = randomInt(diceAlly ? diceAlly.rollMin : 0, diceAlly ? diceAlly.rollMax : 0);
+        if (diceAlly) diceAlly.result = resultAlly;
+        this.queryEffects(
+          TriggersEnum.onAfterDiceRoll,
+          diceAlly ? diceAlly.effects : [],
+          Side.Ally,
+          allyIndex,
+          enemyIndex,
+          diceAlly
+        );
+        this.queryEffects(TriggersEnum.onAfterDiceRoll, ally.status, Side.Ally, allyIndex, enemyIndex, diceAlly);
+        if (diceAlly && (diceAlly.type == DiceType.Dodge || diceAlly.type == DiceType.Block))
+          resultAlly += allyStats.defPowerAdd * allyStats.defPowerMult;
+        else resultAlly += allyStats.atkPowerAdd * allyStats.atkPowerMult;
+        resultEnemy = randomInt(diceEnemy ? diceEnemy.rollMin : 0, diceEnemy ? diceEnemy.rollMax : 0);
+        if (diceEnemy) diceEnemy.result = resultEnemy;
+        this.queryEffects(
+          TriggersEnum.onAfterDiceRoll,
+          diceEnemy ? diceEnemy.effects : [],
+          Side.Enemy,
+          enemyIndex,
+          allyIndex,
+          diceEnemy
+        );
+        this.queryEffects(TriggersEnum.onAfterDiceRoll, enemy.status, Side.Enemy, enemyIndex, allyIndex, diceEnemy);
+        if (diceEnemy && (diceEnemy.type == DiceType.Dodge || diceEnemy.type == DiceType.Block))
+          resultEnemy += enemyStats.defPowerAdd * enemyStats.defPowerMult;
+        else resultEnemy += enemyStats.atkPowerAdd * enemyStats.atkPowerMult;
+        let winner, looser: Character;
+        let resultWinner, resultLooser: number;
+        let diceWinner: DiceRoll | null = null,
+          diceLooser: DiceRoll | null = null;
+        let winnerIndex: number, looserIndex: number;
+        let winnerSide: Side, looserSide: Side;
+        let looserStat: TurnStats;
+        // let winnerPage, looserPage: Page | null;
+        if (resultAlly > resultEnemy || (diceAlly && !diceEnemy)) {
+          winner = ally;
+          looser = enemy;
+          resultWinner = resultAlly;
+          resultLooser = resultEnemy;
+          diceWinner = diceAlly;
+          diceLooser = diceEnemy;
+          winnerIndex = allyIndex;
+          looserIndex = enemyIndex;
+          winnerSide = Side.Ally;
+          looserSide = Side.Enemy;
+          looserStat = enemyStats;
+        } else if (resultEnemy > resultAlly || (diceEnemy && !diceAlly)) {
+          winner = enemy;
+          looser = ally;
+          resultWinner = resultEnemy;
+          resultLooser = resultAlly;
+          diceWinner = diceEnemy;
+          diceLooser = diceAlly;
+          winnerIndex = enemyIndex;
+          looserIndex = allyIndex;
+          winnerSide = Side.Enemy;
+          looserSide = Side.Ally;
+          looserStat = allyStats;
         } else {
-          console.log("Unilateral defense, recycling dice (todo)");
-          // IMPLEMENTING DICE RECYCLING TODO
+          winnerSide = Side.NA;
         }
+        if (diceAlly && diceEnemy && winner) {
+          // Clash with both dices played
+          this.queryEffects(TriggersEnum.onClashWin, diceWinner!.effects, winnerSide!, winnerIndex!, looserIndex!);
+          this.queryEffects(TriggersEnum.onClashWin, winner!.status, winnerSide!, winnerIndex!, looserIndex!);
+          this.queryEffects(TriggersEnum.onClashLose, diceLooser!.effects, looserSide!, looserIndex!, winnerIndex!);
+          this.queryEffects(TriggersEnum.onClashLose, looser!.status, looserSide!, looserIndex!, winnerIndex!);
+          if (
+            diceWinner!.type == DiceType.Dodge &&
+            diceLooser!.type != DiceType.Dodge &&
+            diceLooser!.type != DiceType.Block
+          ) {
+            winner!.doDamage(DiceType.Dodge, AttackType.Stagger, -resultWinner!, looserStat!);
+          } else if (diceWinner!.type == DiceType.Block) {
+            looser!.doDamage(DiceType.Block, AttackType.Stagger, resultWinner! - resultLooser!, looserStat!);
+          } else if (diceWinner!.type != DiceType.Dodge) {
+            looser!.doDamage(
+              DiceType.Pure,
+              AttackType.Mixed,
+              diceLooser!.type == DiceType.Block ? resultWinner! - resultLooser! : resultWinner!,
+              looserStat!
+            );
+            this.queryEffects(TriggersEnum.onHit, diceWinner!.effects, winnerSide!, winnerIndex!, looserIndex!);
+            this.queryEffects(TriggersEnum.onHit, winner!.status, winnerSide!, winnerIndex!, looserIndex!);
+          }
+        } else if (!diceLooser && diceWinner) {
+          // Unilateral hit with one dice played
+          if (diceWinner.type != DiceType.Dodge && diceWinner.type != DiceType.Block) {
+            looser!.doDamage(diceWinner.type, AttackType.Mixed, resultWinner!, looserStat!);
+            this.queryEffects(TriggersEnum.onHit, diceWinner.effects, winnerSide!, winnerIndex!, looserIndex!);
+            this.queryEffects(TriggersEnum.onHit, winner!.status, winnerSide!, winnerIndex!, looserIndex!);
+            this.queryEffects(TriggersEnum.onHitReceived, looser!.status, looserSide!, looserIndex!, winnerIndex!);
+          } else {
+            console.log("Unilateral defense, recycling dice (todo)");
+            // IMPLEMENTING DICE RECYCLING TODO
+          }
+        } else {
+          console.log("Tie or no dices");
+          // No dices or tie, do nothing
+        }
+        console.log("Results: ", resultAlly, " vs ", resultEnemy);
+        ally.turnstat.reset();
+        enemy.turnstat.reset();
+        done = true;
+        this.diceStep++;
       } else {
-        console.log("Tie or no dices");
-        // No dices or tie, do nothing
+        console.log("MASS ATTACK STEP, TODO");
+        this.diceStep=0;
+        this.combatStep++;
+        done = true;
       }
-      console.log("Results: ", resultAlly, " vs ", resultEnemy);
-      ally.turnstat.reset();
-      enemy.turnstat.reset();
-      done = true;
-      this.diceStep++;
     }
   }
 

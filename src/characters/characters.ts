@@ -82,7 +82,7 @@ export class Character {
   playPage(pageIndex: number, diceIndex: number, enemyIndex: number, enemyDiceIndex: number) {
     if (this.dead) return;
     if (!this.lightengine.consumeLight(this.hand[pageIndex].cost)) return;
-    this.attacks.push(new Attack(pageIndex, diceIndex, enemyIndex, enemyDiceIndex));
+    this.attacks.push(new Attack(pageIndex, diceIndex, enemyIndex, enemyDiceIndex,this.hand[pageIndex].range));
     this.activeHand = this.getAvailablePages();
   }
 

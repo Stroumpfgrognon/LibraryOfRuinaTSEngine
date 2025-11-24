@@ -1,3 +1,16 @@
+export enum PageType {
+  Melee,
+  Ranged,
+  Mass_Individual,
+  Mass_Summation
+}
+
+export enum AttackRange {
+  Melee = 0,
+  Ranged = 1,
+  Mass = 2
+}
+
 export enum DiceType {
   Slash,
   Pierce,

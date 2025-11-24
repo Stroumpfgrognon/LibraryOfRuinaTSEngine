@@ -113,3 +113,46 @@ export class Protection
     return new Protection(this.count, this.nextScene);
   }
 }
+
+export class Endurance
+  extends StatusEffect
+  implements ExpiringStatus, CombatTriggers.OnDiceRoll, CombatTriggers.endOfScene
+{
+  constructor(count: number, nextScene: boolean) {
+    super(
+      "Endurance",
+      "https://libraryofruina.wiki.gg/images/thumb/EnduranceIcon.png/26px-EnduranceIcon.png",
+      "Defensive dice used by the character gain X power.",
+      true,
+      count,
+      99,
+      false,
+      nextScene
+    );
+  }
+
+  expire() {
+    return new ExpungeStatusResult();
+  }
+
+  onDiceRoll(): ResultMessage {
+    return StatusResultMessage.createMessage(
+      new Targetting.SelfTarget(),
+      EffectType.IncreaseRollDefensive,
+      this.count
+    );
+  }
+
+  endOfScene() {
+    let result = new StatusResultMessage([]);
+    let expiry = this.expire();
+    if (expiry) {
+      result.addResult(expiry);
+    }
+    return result;
+  }
+
+  override clone(): Endurance {
+    return new Endurance(this.count, this.nextScene);
+  }
+}

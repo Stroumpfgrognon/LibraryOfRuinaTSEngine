@@ -9,7 +9,8 @@ import { LightEngine } from "./light";
 export class Finn extends Character {
   constructor() {
     let deck = new Deck();
-    deck.addPage(new Pages.DegradedShockwave());
+    deck.addPage(new Pages.LightAttack());
+    deck.addPage(new Pages.PreparedMind());
     super(
       "Finn",
       new characterSpriteSheet(
@@ -27,10 +28,40 @@ export class Finn extends Character {
       new Health(100, 100, 100, 100, new Resistance(1, 1, 1, 1, 1, 1)),
       deck,
       new HumanEmotionEngine(),
-      new LightEngine(10),
+      new LightEngine(5),
       3,
       1,
-      10
+      6
+    );
+  }
+}
+
+export class Binah extends Character {
+  constructor() {
+    let deck = new Deck();
+    deck.addPage(new Pages.DegradedShockwave());
+    deck.addPage(new Pages.PreparedMind());
+    super(
+      "Binah",
+      new characterSpriteSheet(
+        "https://libraryofruina.wiki.gg/images/BinahCombatIdle.png",
+        "https://libraryofruina.wiki.gg/images/BinahCombatMove.png",
+        "https://libraryofruina.wiki.gg/images/BinahCombatSlash.png",
+        "https://libraryofruina.wiki.gg/images/BinahCombatPierce.png",
+        "https://libraryofruina.wiki.gg/images/BinahCombatBlunt.png",
+        "https://libraryofruina.wiki.gg/images/BinahCombatBlock.png",
+        "https://libraryofruina.wiki.gg/images/BinahCombatEvade.png",
+        "https://libraryofruina.wiki.gg/images/BinahCombatDamaged.png",
+        "",
+        1
+      ),
+      new Health(200, 200, 200, 200, new Resistance(0.5, 1, 2, 2, 1, 0.5)),
+      deck,
+      new HumanEmotionEngine(),
+      new LightEngine(10),
+      4,
+      8,
+      8,
     );
   }
 }

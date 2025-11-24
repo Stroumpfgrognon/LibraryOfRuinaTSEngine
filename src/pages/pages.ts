@@ -1,12 +1,8 @@
 import { PageEffect } from "#pages/effects";
 import { DiceRoll } from "#pages/dice";
+import { AttackRange, PageType } from "#enums/attack";
 
-export enum PageType {
-  Melee,
-  Ranged,
-  Mass_Individual,
-  Mass_Summation
-}
+
 
 export class Page {
   name: string;
@@ -17,6 +13,7 @@ export class Page {
   rolls: DiceRoll[];
   cost: number;
   broken: boolean = false;
+  range : AttackRange;
 
   constructor(
     name: string,
@@ -26,7 +23,7 @@ export class Page {
     imagebig: string,
     pageEffect: PageEffect.PageEffect,
     rolls: DiceRoll[],
-    broken: boolean = false
+    broken: boolean = false,
   ) {
     this.name = name;
     this.type = type;
@@ -36,6 +33,13 @@ export class Page {
     this.pageEffect = pageEffect;
     this.rolls = rolls;
     this.broken = broken;
+    if (type === PageType.Melee) {
+      this.range = AttackRange.Melee;
+    } else if (type === PageType.Ranged) {
+      this.range = AttackRange.Ranged;
+    } else {
+      this.range = AttackRange.Mass;
+    }
   }
 
   copy() : Page {

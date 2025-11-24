@@ -1,5 +1,5 @@
 import { Attack } from "#characters/attacks";
-import { Side } from "#enums/attack";
+import { AttackRange, Side } from "#enums/attack";
 import { Page } from "#pages/pages";
 
 export class ClashAttack {
@@ -48,12 +48,12 @@ export class ClashFull {
   enemyIndex : number;
   allyPage : Page | null;
   enemyPage : Page | null;
-  priority_level : 0 | 1 | 2 = 0; // 0 = melee, 1 = ranged, 2 = mass
+  priority_level : AttackRange = AttackRange.Melee; // 0 = melee, 1 = ranged, 2 = mass
   mass_side : Side = Side.NA;
   mass_speed : number = 0;
   extra_targets : Attack[] = [];
 
-  constructor(allyIndex : number, enemyIndex : number, allyPage : Page | null, enemyPage : Page | null, priority_level : 0 | 1 | 2 = 0, mass_side : Side = Side.NA, mass_speed : number = 0, extra_targets : Attack[] = []) {
+  constructor(allyIndex : number, enemyIndex : number, allyPage : Page | null, enemyPage : Page | null, priority_level : AttackRange = AttackRange.Melee, mass_side : Side = Side.NA, mass_speed : number = 0, extra_targets : Attack[] = []) {
     this.allyIndex = allyIndex;
     this.enemyIndex = enemyIndex;
     this.allyPage = allyPage;
