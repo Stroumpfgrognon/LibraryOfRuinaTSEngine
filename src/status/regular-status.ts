@@ -4,11 +4,10 @@ import { ExpungeStatusResult } from "#results/results";
 import { ResultMessage, StatusResultMessage } from "#results/resultlist";
 import { EffectType } from "#enums/effect";
 import { Targetting } from "#results/targets";
+import { DiceRoll } from "#pages/dice";
+import { DiceType } from "#enums/attack";
 
-export class Burn
-  extends StatusEffect
-  implements ExpiringStatus, CombatTriggers.endOfScene
-{
+export class Burn extends StatusEffect implements ExpiringStatus, CombatTriggers.endOfScene {
   constructor(count: number, nextScene: boolean) {
     super(
       "Burn",
@@ -31,11 +30,7 @@ export class Burn
   }
 
   endOfScene() {
-    let result = StatusResultMessage.createMessage(
-      new Targetting.SelfTarget(),
-      EffectType.Damage,
-      this.count
-    );
+    let result = StatusResultMessage.createMessage(new Targetting.SelfTarget(), EffectType.Damage, this.count);
     result.addResult(this.expire());
     return result;
   }
@@ -45,10 +40,41 @@ export class Burn
   }
 }
 
-export class Feeble
-  extends StatusEffect
-  implements ExpiringStatus, CombatTriggers.OnDiceRoll
-{
+export class Bleed extends StatusEffect implements ExpiringStatus, CombatTriggers.OnDiceRoll {
+  constructor(count: number, nextScene: boolean) {
+    super(
+      "Bleed",
+      "https://libraryofruina.wiki.gg/images/thumb/BleedIcon.png/26px-BleedIcon.png",
+      "Each time the character uses an Offensive Die, they take X damage, then the number of stacks is reduced by 1/3 (rounded up).",
+      true,
+      count,
+      99,
+      false,
+      nextScene
+    );
+  }
+
+  expire(): ExpungeStatusResult | null {
+    this.count = Math.floor((this.count * 2) / 3);
+    if (this.count <= 0) {
+      return new ExpungeStatusResult();
+    }
+    return null;
+  }
+
+  onDiceRoll(roll: DiceRoll | null): ResultMessage {
+    if (roll === null || roll.type === DiceType.Block || roll.type === DiceType.Dodge)
+      return new StatusResultMessage([]);
+    let result = StatusResultMessage.createMessage(new Targetting.SelfTarget(), EffectType.Damage, this.count);
+    let expiry = this.expire();
+    if (expiry) {
+      result.addResult(expiry);
+    }
+    return result;
+  }
+}
+
+export class Feeble extends StatusEffect implements ExpiringStatus, CombatTriggers.OnDiceRoll {
   constructor(count: number, nextScene: boolean) {
     super(
       "Feeble",
@@ -79,10 +105,7 @@ export class Feeble
   }
 }
 
-export class Protection
-  extends StatusEffect
-  implements ExpiringStatus, CombatTriggers.OnDiceRoll
-{
+export class Protection extends StatusEffect implements ExpiringStatus, CombatTriggers.OnDiceRoll {
   constructor(count: number, nextScene: boolean) {
     super(
       "Protection",
@@ -136,11 +159,7 @@ export class Endurance
   }
 
   onDiceRoll(): ResultMessage {
-    return StatusResultMessage.createMessage(
-      new Targetting.SelfTarget(),
-      EffectType.IncreaseRollDefensive,
-      this.count
-    );
+    return StatusResultMessage.createMessage(new Targetting.SelfTarget(), EffectType.IncreaseRollDefensive, this.count);
   }
 
   endOfScene() {

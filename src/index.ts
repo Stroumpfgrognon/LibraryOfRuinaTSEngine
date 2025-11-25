@@ -1,9 +1,12 @@
 // Library entry point — re-export every module using the path aliases defined
 // in `tsconfig.json`. This keeps imports concise and consistent across the codebase.
 
-// @types
+// Results
 export * from '#results/resultlist';
 export * from '#results/results';
+export * from '#results/combat';
+
+// Status Effects and Triggers
 export * from '#status/status';
 export * from '#triggers/triggers';
 

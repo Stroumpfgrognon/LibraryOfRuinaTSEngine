@@ -79,3 +79,19 @@ export class DegradedShockwave extends Page {
     );
   }
 }
+
+export class GreatSplitHorizontal extends Page {
+  constructor() {
+    super(
+      "Great Split Horizontal",
+      PageType.Mass_Summation,
+      5,
+      "/img/great_split_horizontal_mini.png",
+      "/img/great_split_horizontal.png",
+      new PageEffect.NullEffect(),
+      [
+        new DiceRoll(28, 42, DiceType.Slash, [new DiceEffect.OnHit("Inflict 5 Bleed next scene", new PageResultMessage([new RollResultWithStatus(new Statuses.Bleed(5, true), new Targetting.AllTarget(), 1)]))]),
+      ],
+    );
+  }
+}

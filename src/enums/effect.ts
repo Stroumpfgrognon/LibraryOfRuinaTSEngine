@@ -22,3 +22,11 @@ export enum EffectType {
   ExpungeStatus, // Used to remove a status effect
   InflictStatus, // Used to add a status effect
 }
+
+export enum TargetType {
+  SELF,
+  ALLIES,
+  ENNEMIES,
+  PAGE_TARGETS,
+  ALL,
+}

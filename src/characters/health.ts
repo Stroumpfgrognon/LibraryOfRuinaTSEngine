@@ -1,5 +1,6 @@
 import { DiceType, AttackType } from "#enums/attack";
 import { TurnStats } from "#characters/stats";
+import { Damage } from "#results/combat";
 export class Resistance {
   SlashHP: number;
   PierceHP: number;
@@ -70,10 +71,12 @@ export class Health {
     amount: number,
     turnstat: TurnStats = new TurnStats(),
     opposingTurnstat: TurnStats = new TurnStats()
-  ): void {
+  ): Damage {
     console.log(turnstat, opposingTurnstat);
+    let damageToHealth = 0;
+    let damageToStagger = 0;
     if (type === AttackType.HP || type === AttackType.Mixed) {
-      let damageToHealth = this.resistance.calculateDamage(dmgtype, amount, false, this.staggered);
+      damageToHealth = this.resistance.calculateDamage(dmgtype, amount, false, this.staggered);
       if (dmgtype != DiceType.Pure && amount >= 0)
         damageToHealth =
           damageToHealth * turnstat.damageReceivedMult * opposingTurnstat.damageDealtMult +
@@ -85,7 +88,7 @@ export class Health {
       if (this.currentHP < 0) this.currentHP = 0;
     }
     if (type === AttackType.Stagger || type === AttackType.Mixed) {
-      let damageToStagger = this.resistance.calculateDamage(dmgtype, amount, true, this.staggered);
+      damageToStagger = this.resistance.calculateDamage(dmgtype, amount, true, this.staggered);
       if (dmgtype != DiceType.Pure && amount >= 0)
         damageToStagger =
           damageToStagger * turnstat.STdamageReceivedMult * opposingTurnstat.STdamageDealtMult +
@@ -99,6 +102,7 @@ export class Health {
         this.stagger();
       }
     }
+    return new Damage(damageToHealth, damageToStagger);
   }
 
   stagger(): void {

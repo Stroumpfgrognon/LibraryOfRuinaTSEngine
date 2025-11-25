@@ -1,10 +1,4 @@
-export enum TargetType {
-  SELF,
-  ALLIES,
-  ENNEMIES,
-  PAGE_TARGETS,
-  ALL,
-}
+import { TargetType } from "#enums/effect";
 
 export namespace Targetting {
   export class Target {

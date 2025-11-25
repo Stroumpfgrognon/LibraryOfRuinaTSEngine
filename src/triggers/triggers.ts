@@ -21,11 +21,7 @@ export namespace CombatTriggers {
   }
 
   export interface OnDiceRoll {
-    onDiceRoll(roll : DiceRoll | null): ResultMessage;
-  }
-
-  export interface OnAfterDiceRoll {
-    onAfterDiceRoll(roll : DiceRoll | null): ResultMessage;
+    onDiceRoll(roll : DiceRoll | null, result : number): ResultMessage;
   }
 
   export interface OnClashWin {

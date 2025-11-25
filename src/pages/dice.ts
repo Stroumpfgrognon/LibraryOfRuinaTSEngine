@@ -6,7 +6,6 @@ export class DiceRoll {
   rollMax: number;
   type: DiceType;
   effects: DiceEffect.DiceEffect[];
-  result : number = 0;
   used : boolean = false;
 
   constructor(

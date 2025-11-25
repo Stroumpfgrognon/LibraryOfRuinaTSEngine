@@ -4,7 +4,6 @@ export enum TriggersEnum {
     onPlay,
     onUse,
     onDiceRoll,
-    onAfterDiceRoll,
     onClashWin,
     onClashLose,
     onHit,

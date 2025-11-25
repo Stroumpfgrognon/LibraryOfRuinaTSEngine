@@ -26,12 +26,8 @@ export function isOnUse(value: any): value is CombatTriggers.OnUse {
   return isTSInterface<CombatTriggers.OnUse>(value, ["onUse"], ["onUse"], true);
 }
 
-export function isOnRoll(value: any): value is CombatTriggers.OnDiceRoll {
+export function isOnDiceRoll(value: any): value is CombatTriggers.OnDiceRoll {
   return isTSInterface<CombatTriggers.OnDiceRoll>(value, ["onDiceRoll"], ["onDiceRoll"], true);
-}
-
-export function isOnAfterRoll(value: any): value is CombatTriggers.OnAfterDiceRoll {
-  return isTSInterface<CombatTriggers.OnAfterDiceRoll>(value, ["onAfterDiceRoll"], ["onAfterDiceRoll"], true);
 }
 
 export function isOnHit(value: any): value is CombatTriggers.OnHit {

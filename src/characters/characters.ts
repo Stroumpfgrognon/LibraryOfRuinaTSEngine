@@ -9,6 +9,7 @@ import { Health } from "#characters/health";
 import { TurnStats } from "#characters/stats";
 import { Attack } from "#characters/attacks";
 import { LightEngine } from "#characters/light";
+import { Damage } from "#results/combat";
 
 let idCounter = 0;
 
@@ -65,24 +66,25 @@ export class Character {
     atktype: AttackType,
     amount: number,
     opposingTurnstat: TurnStats = new TurnStats()
-  ): boolean {
-    if (this.dead) return false;
+  ): Damage {
+    let result;
+    if (this.dead) return new Damage(0, 0);
     if (dmgtype == DiceType.Pure) {
-      this.health.takeDamage(dmgtype, atktype, amount, this.turnstat);
+      result = this.health.takeDamage(dmgtype, atktype, amount, this.turnstat);
     } else {
-      this.health.takeDamage(dmgtype, atktype, amount, this.turnstat, opposingTurnstat);
+      result = this.health.takeDamage(dmgtype, atktype, amount, this.turnstat, opposingTurnstat);
     }
     if (this.health.currentHP <= 0) {
       this.health.currentHP = 0;
       this.dead = true;
     }
-    return true;
+    return result;
   }
 
   playPage(pageIndex: number, diceIndex: number, enemyIndex: number, enemyDiceIndex: number) {
     if (this.dead) return;
     if (!this.lightengine.consumeLight(this.hand[pageIndex].cost)) return;
-    this.attacks.push(new Attack(pageIndex, diceIndex, enemyIndex, enemyDiceIndex,this.hand[pageIndex].range));
+    this.attacks.push(new Attack(pageIndex, diceIndex, enemyIndex, enemyDiceIndex, this.hand[pageIndex].range));
     this.activeHand = this.getAvailablePages();
   }
 

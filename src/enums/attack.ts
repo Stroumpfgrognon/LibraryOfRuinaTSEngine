@@ -2,13 +2,13 @@ export enum PageType {
   Melee,
   Ranged,
   Mass_Individual,
-  Mass_Summation
+  Mass_Summation,
 }
 
 export enum AttackRange {
   Melee = 0,
   Ranged = 1,
-  Mass = 2
+  Mass = 2,
 }
 
 export enum DiceType {
@@ -17,7 +17,7 @@ export enum DiceType {
   Blunt,
   Dodge,
   Block,
-  Pure
+  Pure,
 }
 
 export enum AttackType {
@@ -29,7 +29,7 @@ export enum AttackType {
 export enum Side {
   Ally,
   Enemy,
-  NA
+  NA,
 }
 
 export enum TriggerText {
