@@ -108,9 +108,7 @@ export class Reception {
     attacks.sort(
       (a, b) => b.speed + 0.5 * (b.side == Side.Enemy ? 1 : 0) - a.speed - 0.5 * (a.side == Side.Enemy ? 1 : 0)
     );
-    // attacks.sort(
-    //   (a, b) => b.speed + 0.5 * (b.side == Side.Enemy ? 1 : 0) + (b.attack.attackRange == AttackRange.Mass ? (b.side == Side.Ally ? 2000 : 1000) : 0) + (b.attack.attackRange == AttackRange.Ranged ? 500 : 0) - a.speed - 0.5 * (a.side == Side.Enemy ? 1 : 0) - (a.attack.attackRange == AttackRange.Mass ? (a.side == Side.Ally ? 2000 : 1000) : 0) - (a.attack.attackRange == AttackRange.Ranged ? 500 : 0)
-    // );
+    console.log(attacks)
     let clashes: Clash[] = [];
 
     for (let attack of attacks) {
@@ -140,10 +138,12 @@ export class Reception {
           if (
             clash.attackA.side == Side.Enemy &&
             clash.attackA.characterIndex == attack.attack.foeIndex &&
+            clash.attackA.attack.foeIndex == attack.characterIndex &&
             clash.attackA.attack.foeDiceIndex == attack.attack.diceIndex &&
             attack.attack.foeDiceIndex == clash.attackA.attack.diceIndex &&
             !clash.mass
           ) {
+            console.log("Clash found for ", attack, clash.attackA);
             if (clash.doClash(attack)) {
               clashed = true;
               break;

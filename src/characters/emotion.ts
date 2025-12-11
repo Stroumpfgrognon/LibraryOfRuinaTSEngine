@@ -32,6 +32,10 @@ export class EmotionEngine {
   updateEmotionLevel(): EmotionLevelUp {
     return new EmotionLevelUp(false, -1);
   }
+
+  getLimit(): number {
+    return (Math.max(this.emotionLevel, 1) - 1) * 2 + 3;
+  }
 }
 
 export class HumanEmotionEngine extends EmotionEngine {
@@ -40,7 +44,7 @@ export class HumanEmotionEngine extends EmotionEngine {
   }
 
   override updateEmotionLevel(): EmotionLevelUp {
-    let limit = (Math.max(this.emotionLevel, 1) - 1) * 2 + 3;
+    let limit = this.getLimit();
     if (this.emotionPoints.length >= limit) {
       let balance = 0;
       for (let i = 0; i < limit; i++) {

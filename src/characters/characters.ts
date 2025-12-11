@@ -16,7 +16,7 @@ let idCounter = 0;
 export class Character {
   id: number;
   name: string;
-  spritesheet: characterSpriteSheet;
+  spriteSheet: characterSpriteSheet;
   health: Health;
   status: Array<StatusEffect>;
   deck: Deck;
@@ -43,7 +43,7 @@ export class Character {
   ) {
     this.id = idCounter++;
     this.name = name;
-    this.spritesheet = spritesheet;
+    this.spriteSheet = spritesheet;
     this.health = health;
     this.status = [];
     this.deck = deck;

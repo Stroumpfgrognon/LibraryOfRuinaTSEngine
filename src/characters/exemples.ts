@@ -33,6 +33,7 @@ export class Finn extends Character {
       1,
       6
     );
+    this.spriteSheet.setIdleOffset(-10, 0);
   }
 }
 
