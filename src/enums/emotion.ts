@@ -1,4 +1,4 @@
 export enum EmotionType {
-    Positive,
-    Negative
+    Positive = 1,
+    Negative = -1,
 }

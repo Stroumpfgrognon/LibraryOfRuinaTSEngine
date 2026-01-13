@@ -1,5 +1,21 @@
 import { StatusResult } from "#results/results";
 
+export class StatusDisplay {
+  name: string;
+  icon: string;
+  description: string;
+  count: number | null;
+  visible: boolean;
+
+  constructor(name: string, icon: string, description: string, count: number | null, visible: boolean) {
+    this.name = name;
+    this.icon = icon;
+    this.description = description;
+    this.count = count;
+    this.visible = visible;
+  }
+}
+
 export class StatusEffect {
   name: string;
   icon: string;

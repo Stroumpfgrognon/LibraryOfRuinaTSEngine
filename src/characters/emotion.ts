@@ -36,6 +36,10 @@ export class EmotionEngine {
   getLimit(): number {
     return (Math.max(this.emotionLevel, 1) - 1) * 2 + 3;
   }
+
+  startOfScene(): void {
+    this.updateEmotionLevel();
+  }
 }
 
 export class HumanEmotionEngine extends EmotionEngine {
@@ -68,7 +72,6 @@ export class AbnormalityEmotionEngine extends EmotionEngine {
   }
 
   override addEmotionPoint(): void {
-      return;
+    return;
   }
 }
-

@@ -10,6 +10,7 @@ import { TurnStats } from "#characters/stats";
 import { Attack } from "#characters/attacks";
 import { LightEngine } from "#characters/light";
 import { Damage } from "#results/combat";
+import { EmotionType } from "..";
 
 let idCounter = 0;
 
@@ -25,7 +26,10 @@ export class Character {
   emotion: EmotionEngine;
   lightengine: LightEngine;
   turnstat: TurnStats = new TurnStats();
+  diceamount: number;
   dices: SpeedDice[];
+  mindice: number;
+  maxdice: number;
   attacks: Attack[] = [];
   dead: boolean = false;
   immobilized: boolean = false;
@@ -55,6 +59,9 @@ export class Character {
     this.emotion = emotion;
     this.lightengine = lightengine;
     this.dices = [];
+    this.diceamount = diceamount;
+    this.mindice = mindice;
+    this.maxdice = maxdice;
     for (let i = 0; i < diceamount; i++) {
       this.dices.push(new SpeedDice(mindice, maxdice));
     }
@@ -77,6 +84,7 @@ export class Character {
     if (this.health.currentHP <= 0) {
       this.health.currentHP = 0;
       this.dead = true;
+      result.lethal = true;
     }
     return result;
   }
@@ -112,8 +120,13 @@ export class Character {
     return result;
   }
 
+  cleanHand(): void {
+    if (this.dead) return;
+    this.hand = this.hand.filter((page) => page.broken == false);
+  }
+
   inflictStatus(status: StatusEffect): boolean {
-    if (this.dead || this.immobilized) return false;
+    if (this.dead) return false;
     let ref = -1;
     for (let i = 0; i < this.status.length; i++) {
       if (this.status[i].name === status.name) {
@@ -147,15 +160,49 @@ export class Character {
         dice.locked = false;
       }
     }
-    this.deck.drawPage();
+    this.cleanHand();
+    this.hand.push(this.deck.drawPage());
     this.activeHand = this.getAvailablePages();
     this.lightengine.addLight(1);
-    for (let dice of this.dices) {
-      dice.doRoll(this.turnstat.speedAdd);
+    // for (let dice of this.dices) {
+    //   dice.doRoll(this.turnstat.speedAdd);
+    // }
+    let NewDices = []
+    for (let i = 0; i < this.diceamount; i++) {
+      NewDices.push(new SpeedDice(this.mindice, this.maxdice));
+      NewDices[i].doRoll(this.turnstat.speedAdd);
     }
+    NewDices.sort((dice1, dice2) => dice2.roll - dice1.roll);
+    this.dices = NewDices;
     this.turnstat.reset();
-    this.dices.sort((dice1, dice2) => dice2.roll - dice1.roll);
+    // this.dices.sort((dice1, dice2) => dice2.roll - dice1.roll);
+    this.attacks = [];
+    this.emotion.startOfScene();
   }
 
+  getKill() {
+    if (this.dead) return;
+    this.emotion.addEmotionPoint(EmotionType.Positive);
+    this.emotion.addEmotionPoint(EmotionType.Positive);
+  }
+
+  allyDied() {
+    if (this.dead) return;
+    this.emotion.addEmotionPoint(EmotionType.Negative);
+  }
+
+  clashLoose() {
+    if (this.dead) return;
+    this.emotion.addEmotionPoint(EmotionType.Negative);
+  }
+
+  clashWin() {
+    if (this.dead) return;
+    this.emotion.addEmotionPoint(EmotionType.Positive);
+  }
+
+  getHit() {
+    if (this.dead) return;
+  }
   // onDiceRoll(dice, handler)
 }

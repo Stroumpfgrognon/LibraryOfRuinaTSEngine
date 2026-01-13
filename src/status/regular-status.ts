@@ -24,14 +24,19 @@ export class Burn extends StatusEffect implements ExpiringStatus, CombatTriggers
   expire() {
     this.count = Math.floor((this.count * 2) / 3);
     if (this.count <= 0) {
+      this.count = 0;
       return new ExpungeStatusResult();
     }
     return null;
   }
 
   endOfScene() {
+    if (this.count <= 0) {
+      return new StatusResultMessage([]);
+    }
     let result = StatusResultMessage.createMessage(new Targetting.SelfTarget(), EffectType.Damage, this.count);
     result.addResult(this.expire());
+    console.log("Burn endOfScene called, result:", result);
     return result;
   }
 
@@ -57,13 +62,14 @@ export class Bleed extends StatusEffect implements ExpiringStatus, CombatTrigger
   expire(): ExpungeStatusResult | null {
     this.count = Math.floor((this.count * 2) / 3);
     if (this.count <= 0) {
+      this.count = 0;
       return new ExpungeStatusResult();
     }
     return null;
   }
 
   onDiceRoll(roll: DiceRoll | null): ResultMessage {
-    if (roll === null || roll.type === DiceType.Block || roll.type === DiceType.Dodge)
+    if (roll === null || roll.type === DiceType.Block || roll.type === DiceType.Dodge || this.count <= 0)
       return new StatusResultMessage([]);
     let result = StatusResultMessage.createMessage(new Targetting.SelfTarget(), EffectType.Damage, this.count);
     let expiry = this.expire();
@@ -89,10 +95,14 @@ export class Feeble extends StatusEffect implements ExpiringStatus, CombatTrigge
   }
 
   expire() {
+    this.count = 0;
     return new ExpungeStatusResult();
   }
 
   onDiceRoll(): ResultMessage {
+    if (this.count <= 0) {
+      return new StatusResultMessage([]);
+    }
     return StatusResultMessage.createMessage(
       new Targetting.SelfTarget(),
       EffectType.IncreaseRollOffensive,
@@ -120,10 +130,14 @@ export class Protection extends StatusEffect implements ExpiringStatus, CombatTr
   }
 
   expire() {
+    this.count = 0;
     return new ExpungeStatusResult();
   }
 
   onDiceRoll(): ResultMessage {
+    if (this.count <= 0) {
+      return new StatusResultMessage([]);
+    }
     let result = StatusResultMessage.createMessage(
       new Targetting.SelfTarget(),
       EffectType.IncreaseDamageReceived,
@@ -155,10 +169,14 @@ export class Endurance
   }
 
   expire() {
+    this.count = 0;
     return new ExpungeStatusResult();
   }
 
   onDiceRoll(): ResultMessage {
+    if (this.count <= 0) {
+      return new StatusResultMessage([]);
+    }
     return StatusResultMessage.createMessage(new Targetting.SelfTarget(), EffectType.IncreaseRollDefensive, this.count);
   }
 

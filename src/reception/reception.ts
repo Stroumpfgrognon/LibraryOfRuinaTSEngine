@@ -72,6 +72,28 @@ export class Reception {
     }
   }
 
+  newScene(): void {
+    for (let i = 0; i < this.allies.length; i++) {
+      if (this.allies[i].dead) continue;
+      this.queryEffects(TriggersEnum.endOfScene, this.allies[i].status, Side.Ally, i, i);
+      if (this.allies[i].dead) this.handleDeaths(Side.Ally, -1);
+    }
+    for (let i = 0; i < this.enemies.length; i++) {
+      if (this.enemies[i].dead) continue;
+      this.queryEffects(TriggersEnum.endOfScene, this.enemies[i].status, Side.Enemy, i, i);
+      if (this.enemies[i].dead) this.handleDeaths(Side.Enemy, -1);
+    }
+    this.enemiesStart();
+    this.alliesStart();
+    this.clashToDate = false;
+    this.combatStep = -1;
+    this.selectedCharacter = null;
+    this.selectedAlly = null;
+    this.selectedDiceNumber = null;
+    this.resolveClashes();
+    console.log(this.allies, this.enemies);
+  }
+
   playPageAlly(
     allyIndex: number,
     pageIndex: number,
@@ -108,7 +130,7 @@ export class Reception {
     attacks.sort(
       (a, b) => b.speed + 0.5 * (b.side == Side.Enemy ? 1 : 0) - a.speed - 0.5 * (a.side == Side.Enemy ? 1 : 0)
     );
-    console.log(attacks)
+    console.log(attacks);
     let clashes: Clash[] = [];
 
     for (let attack of attacks) {
@@ -221,6 +243,7 @@ export class Reception {
   }
 
   doCombatStep(): CombatStepResult | MassCombatStepResult {
+    console.warn("Entering combat step");
     if (this.clashToDate == false) {
       this.resolveClashes();
       this.combatStep = 0;
@@ -230,6 +253,7 @@ export class Reception {
     if (this.combatStep < 0) {
       this.combatStep = 0;
       this.diceStep = 0;
+      console.log("Starting combat : ", this.combatStep, this.clashPages);
     }
     if (this.combatStep == 0 && this.diceStep == 0) {
       // Combat Start
@@ -261,6 +285,7 @@ export class Reception {
     let resultAlly: Roll;
     let resultEnemy: Roll;
     if (this.combatStep >= this.clashPages.length) {
+      console.log(this.combatStep, this.clashPages);
       console.log("Turn finished");
       return CombatStepResult.noCombatStep();
     }
@@ -315,9 +340,12 @@ export class Reception {
           }
         }
       }
-      if (!diceAlly && !diceEnemy) {
+      if ((!diceAlly && !diceEnemy) || ally.dead || enemy.dead) {
         this.combatStep++;
         this.diceStep = 0;
+        console.warn("Both sides exhausted dices / someone is dead, moving to next clash");
+        if (allyPage) allyPage.broken = true;
+        if (enemyPage) enemyPage.broken = true;
         return this.doCombatStep();
       }
       // First, before roll statuses
@@ -360,7 +388,7 @@ export class Reception {
       if (diceEnemy && (diceEnemy.type == DiceType.Dodge || diceEnemy.type == DiceType.Block))
         resultEnemy.addModifier(enemyStats.defPowerAdd * enemyStats.defPowerMult);
       else resultEnemy.addModifier(enemyStats.atkPowerAdd * enemyStats.atkPowerMult);
-      let winner, looser: Character;
+      let winner: Character, looser: Character;
       let resultWinner: number, resultLooser: number;
       let diceWinner: DiceRoll | null = null,
         diceLooser: DiceRoll | null = null;
@@ -368,7 +396,7 @@ export class Reception {
       let winnerSide: Side, looserSide: Side;
       let looserStat: TurnStats;
       // let winnerPage, looserPage: Page | null;
-      if (resultAlly > resultEnemy || (diceAlly && !diceEnemy)) {
+      if (resultAlly.modified > resultEnemy.modified || (diceAlly && !diceEnemy)) {
         winner = ally;
         looser = enemy;
         resultWinner = resultAlly.modified;
@@ -380,7 +408,7 @@ export class Reception {
         winnerSide = Side.Ally;
         looserSide = Side.Enemy;
         looserStat = enemyStats;
-      } else if (resultEnemy > resultAlly || (diceEnemy && !diceAlly)) {
+      } else if (resultEnemy.modified > resultAlly.modified || (diceEnemy && !diceAlly)) {
         winner = enemy;
         looser = ally;
         resultWinner = resultEnemy.modified;
@@ -396,18 +424,21 @@ export class Reception {
         winnerSide = Side.NA;
       }
       let damageResult: Damage | null = null;
-      if (diceAlly && diceEnemy && winner) {
+      if (diceAlly && diceEnemy && winnerSide != Side.NA) {
         // Clash with both dices played
         this.queryEffects(TriggersEnum.onClashWin, diceWinner!.effects, winnerSide!, winnerIndex!, looserIndex!);
         this.queryEffects(TriggersEnum.onClashWin, winner!.status, winnerSide!, winnerIndex!, looserIndex!);
+        winner!.clashWin();
         this.queryEffects(TriggersEnum.onClashLose, diceLooser!.effects, looserSide!, looserIndex!, winnerIndex!);
         this.queryEffects(TriggersEnum.onClashLose, looser!.status, looserSide!, looserIndex!, winnerIndex!);
+        looser!.clashLoose();
         if (
           diceWinner!.type == DiceType.Dodge &&
           diceLooser!.type != DiceType.Dodge &&
           diceLooser!.type != DiceType.Block
         ) {
           damageResult = winner!.doDamage(DiceType.Dodge, AttackType.Stagger, -resultWinner!, looserStat!);
+          looser!.getHit();
         } else if (diceWinner!.type == DiceType.Block) {
           damageResult = looser!.doDamage(
             DiceType.Block,
@@ -432,6 +463,7 @@ export class Reception {
           this.queryEffects(TriggersEnum.onHit, diceWinner.effects, winnerSide!, winnerIndex!, looserIndex!);
           this.queryEffects(TriggersEnum.onHit, winner!.status, winnerSide!, winnerIndex!, looserIndex!);
           this.queryEffects(TriggersEnum.onHitReceived, looser!.status, looserSide!, looserIndex!, winnerIndex!);
+          looser!.getHit();
         } else {
           console.log("Unilateral defense, recycling dice (todo)");
           // IMPLEMENTING DICE RECYCLING TODO
@@ -445,6 +477,12 @@ export class Reception {
       enemy.turnstat.reset();
       // done = true;
       this.diceStep++;
+      if (ally.dead) {
+        this.handleDeaths(Side.Ally, enemyIndex);
+      }
+      if (enemy.dead) {
+        this.handleDeaths(Side.Enemy, allyIndex);
+      }
       return new CombatStepResult(diceAlly, diceEnemy, resultAlly, resultEnemy, winnerSide, damageResult);
     } else if (clash.priority_level == AttackRange.Mass) {
       let massResult = new MassCombatStepResult();
@@ -490,7 +528,7 @@ export class Reception {
           let enemyStats = enemy.turnstat;
           if (clash.allyPage.type == PageType.Mass_Summation) {
             // We summ all dice results on the other side
-            let enemyTotal : Roll = new Roll(0);
+            let enemyTotal: Roll = new Roll(0);
             if (enemyPage) {
               for (let diceEnemy of enemyPage.rolls) {
                 if (!diceEnemy.used) {
@@ -688,7 +726,12 @@ export class Reception {
               if (diceAlly) {
                 diceAlly.used = true;
                 if (diceAlly.type == DiceType.Block) {
-                  damageResult = ally.doDamage(DiceType.Block, AttackType.Mixed, resultEnemy.modified - resultAlly.modified, allyStats);
+                  damageResult = ally.doDamage(
+                    DiceType.Block,
+                    AttackType.Mixed,
+                    resultEnemy.modified - resultAlly.modified,
+                    allyStats
+                  );
                 } else {
                   damageResult = ally.doDamage(diceEnemy.type, AttackType.Mixed, resultEnemy.modified, allyStats);
                 }
@@ -705,6 +748,7 @@ export class Reception {
       this.diceStep++;
       return massResult;
     }
+    console.error("Should not reach this point in doCombatStep");
     return CombatStepResult.noCombatStep();
   }
 
@@ -761,10 +805,10 @@ export class Reception {
         case EffectType.Damage:
           if (effect.target.type == TargetType.SELF) {
             if (side == Side.Ally) {
-              this.enemies[originIndex].doDamage(DiceType.Pure, AttackType.HP, effect.value);
+              this.allies[originIndex].doDamage(DiceType.Pure, AttackType.HP, effect.value);
             }
             if (side == Side.Enemy) {
-              this.allies[originIndex].doDamage(DiceType.Pure, AttackType.HP, effect.value);
+              this.enemies[originIndex].doDamage(DiceType.Pure, AttackType.HP, effect.value);
             }
           } else if (effect.target.type == TargetType.PAGE_TARGETS) {
             if (side == Side.Ally) {
@@ -814,10 +858,10 @@ export class Reception {
         case EffectType.StaggerDamage:
           if (effect.target.type == TargetType.SELF) {
             if (side == Side.Ally) {
-              this.enemies[originIndex].doDamage(DiceType.Pure, AttackType.Stagger, effect.value);
+              this.allies[originIndex].doDamage(DiceType.Pure, AttackType.Stagger, effect.value);
             }
             if (side == Side.Enemy) {
-              this.allies[originIndex].doDamage(DiceType.Pure, AttackType.Stagger, effect.value);
+              this.enemies[originIndex].doDamage(DiceType.Pure, AttackType.Stagger, effect.value);
             }
           } else if (effect.target.type == TargetType.PAGE_TARGETS) {
             if (side == Side.Ally) {
@@ -921,10 +965,10 @@ export class Reception {
         case EffectType.Stagger:
           if (effect.target.type == TargetType.SELF) {
             if (side == Side.Ally) {
-              this.enemies[originIndex].health.stagger();
+              this.allies[originIndex].health.stagger();
             }
             if (side == Side.Enemy) {
-              this.allies[originIndex].health.stagger();
+              this.enemies[originIndex].health.stagger();
             }
           } else if (effect.target.type == TargetType.PAGE_TARGETS) {
             if (side == Side.Ally) {
@@ -1700,9 +1744,25 @@ export class Reception {
             }
           }
           break;
+        // case EffectType.ExpungeStatus:
+        //   break;
         default: {
           console.error("Unhandled effect type in handleEffect:", effect.type);
         }
+      }
+    }
+  }
+
+  handleDeaths(side: Side, killerIndex: number) {
+    if (side == Side.Ally) {
+      if (killerIndex > 0) this.enemies[killerIndex].getKill();
+      for (let i = 0; i < this.allies.length; i++) {
+        this.allies[i].allyDied();
+      }
+    } else if (side == Side.Enemy) {
+      if (killerIndex > 0) this.allies[killerIndex].getKill();
+      for (let i = 0; i < this.enemies.length; i++) {
+        this.enemies[i].allyDied();
       }
     }
   }

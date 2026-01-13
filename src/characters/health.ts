@@ -72,7 +72,7 @@ export class Health {
     turnstat: TurnStats = new TurnStats(),
     opposingTurnstat: TurnStats = new TurnStats()
   ): Damage {
-    console.log(turnstat, opposingTurnstat);
+    // console.log(turnstat, opposingTurnstat);
     let damageToHealth = 0;
     let damageToStagger = 0;
     if (type === AttackType.HP || type === AttackType.Mixed) {

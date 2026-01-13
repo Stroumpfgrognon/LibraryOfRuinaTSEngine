@@ -19,6 +19,7 @@ export class Roll {
 export class Damage {
   damageHP: number;
   damageST: number;
+  lethal : boolean = false;
 
   constructor(damageHP: number, damageST: number) {
     this.damageHP = damageHP;
@@ -34,6 +35,7 @@ export class CombatStepResult {
   winner: Side;
   damageHP: number;
   damageST: number;
+  valid : boolean = true;
 
   constructor(
     diceAlly: DiceRoll | null,
@@ -41,7 +43,8 @@ export class CombatStepResult {
     rollAlly: Roll,
     rollEnemy: Roll,
     winner: Side,
-    damage: Damage | null
+    damage: Damage | null,
+    valid: boolean = true
   ) {
     this.diceAlly = diceAlly;
     this.diceEnemy = diceEnemy;
@@ -55,10 +58,11 @@ export class CombatStepResult {
       this.damageHP = damage.damageHP;
       this.damageST = damage.damageST;
     }
+    this.valid = valid;
   }
 
   static noCombatStep(): CombatStepResult {
-    return new CombatStepResult(new DiceRoll(0, 0, 0, []), new DiceRoll(0, 0, 0, []), new Roll(0), new Roll(0), Side.NA, new Damage(0, 0));
+    return new CombatStepResult(new DiceRoll(0, 0, 0, []), new DiceRoll(0, 0, 0, []), new Roll(0), new Roll(0), Side.NA, new Damage(0, 0),false);
   }
 }
 
